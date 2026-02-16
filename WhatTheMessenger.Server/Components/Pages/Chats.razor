@@ -1,13 +1,66 @@
 ﻿@page "/chats"
-
-@using Microsoft.AspNetCore.Authorization
-
+@rendermode InteractiveServer
 @attribute [Authorize]
 
-<PageTitle>Auth</PageTitle>
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using WhatTheMessenger.Core.Models
+@using WhatTheMessenger.Infrastructure.DataAccess
 
-<h1>You are authenticated</h1>
+@inject UserManager<User> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ApplicationDbContext DbContext
+
+<PageTitle>Chats</PageTitle>
 
 <AuthorizeView>
-    Hello @context.User.Identity?.Name!
+    <h3>
+        Hello @context.User.Identity?.Name!
+    </h3>
+
+    @if (userChats == null)
+    {
+        <p>Loading your chats...</p>
+    }
+    else if (!userChats.Any())
+    {
+        <p>You don't have any chats yet.</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var chat in userChats)
+            {
+                <li>@chat.Name</li>
+            }
+        </ul>
+    }
 </AuthorizeView>
+
+@code {
+    private List<Chat>? userChats;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadChatsAsync();
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task LoadChatsAsync()
+    {
+        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        if (!(state.User.Identity?.IsAuthenticated ?? false))
+            return;
+
+        var userId = state.User.FindFirst(x => x.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
+        var userGuid = Guid.Parse(userId!.Value);
+        var user = await DbContext.Users.FindAsync(userGuid);
+
+        userChats = user!.Chats.ToList();
+    }
+}
