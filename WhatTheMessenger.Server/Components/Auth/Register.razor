@@ -1,0 +1,86 @@
+﻿@page "/auth/register"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.AspNetCore.Identity
+@using WhatTheMessenger.Core.Models
+
+@inject NavigationManager NavigationManager
+@inject IUserStore<User> UserStore
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
+
+<h3>Register</h3>
+
+<EditForm Model="Model" method="post" OnValidSubmit="HandleValidSubmit" FormName="register">
+    <DataAnnotationsValidator />
+    <ValidationSummary role="alert" />
+    @Message
+    <div>
+        Nickname:
+        <InputText @bind-Value="Model!.Nickname" type="none"/>
+    </div>
+
+    <div>
+        Login:
+        <InputText @bind-Value="Model!.Login"/>
+    </div>
+
+    <div>
+        Password:
+        <InputText @bind-Value="Model!.Password" type="password" />
+    </div>
+
+    <button type="submit">Register</button>
+</EditForm>
+
+@code {
+    private IEnumerable<IdentityError>? identityErrors;
+
+    private string? Message => identityErrors is null ? null : $"Error: {string.Join(", ", identityErrors.Select(error => error.Description))}";
+
+    [SupplyParameterFromForm]
+    private RegisterModel? Model { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        Model ??= new() { Login = string.Empty, Nickname = string.Empty, Password = string.Empty };
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (Model is null)
+            return;
+
+        var user = new User()
+        {
+            DisplayName = Model.Nickname,
+        };
+
+        await UserStore.SetUserNameAsync(user, Model.Login.ToLower(), CancellationToken.None);
+        var result = await UserManager.CreateAsync(user, Model.Password);
+
+        if (!result.Succeeded)
+        {
+            identityErrors = result.Errors;
+            return;
+        }
+
+        await SignInManager.SignInAsync(user, true);
+        NavigationManager.NavigateTo("/Chats/");
+    }
+
+    public sealed record RegisterModel
+    {
+        [StringLength(100, MinimumLength = 1)]
+        public required string Nickname { get; set; }
+
+        [StringLength(100, MinimumLength = 1)]
+        public required string Login { get; set; }
+
+        [StringLength(100, MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        public required string Password { get; set; }
+    }
+}

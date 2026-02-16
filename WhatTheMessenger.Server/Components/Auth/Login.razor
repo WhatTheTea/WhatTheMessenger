@@ -1,0 +1,77 @@
+﻿@page "/auth/login"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.AspNetCore.Identity
+@using WhatTheMessenger.Core.Models
+
+@inject NavigationManager NavigationManager
+@inject IUserStore<User> UserStore
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
+
+<h3>Login</h3>
+
+<EditForm Model="Model" method="post" OnValidSubmit="HandleValidSubmit" FormName="login">
+    <DataAnnotationsValidator />
+    <ValidationSummary role="alert" />
+    @ErrorMessage
+    <div>
+        Login:
+        <InputText @bind-Value="Model!.Login"/>
+    </div>
+
+    <div>
+        Password:
+        <InputText @bind-Value="Model!.Password" type="password" />
+    </div>
+
+    <div>
+        <InputCheckbox @bind-Value="Model.RememberMe" />
+        Remember me
+    </div>
+
+    <button type="submit">Login</button>
+</EditForm>
+
+@code {
+    private string? ErrorMessage { get; set; }
+
+    [SupplyParameterFromForm]
+    private LoginModel? Model { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        Model ??= new() { Login = string.Empty, Password = string.Empty };
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (Model is null)
+            return;
+
+        var result = await SignInManager.PasswordSignInAsync(Model.Login, Model.Password, Model.RememberMe, false);
+
+        if (result.Succeeded)
+        {
+            NavigationManager.NavigateTo("/Chats/");
+        } 
+        else
+        {
+            ErrorMessage = "Failed to sign in";
+        }
+    }
+
+    public sealed record LoginModel
+    {
+        [StringLength(100, MinimumLength = 1)]
+        public required string Login { get; set; }
+
+        [StringLength(100, MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        public required string Password { get; set; }
+
+        public bool RememberMe { get; set; }
+    }
+}

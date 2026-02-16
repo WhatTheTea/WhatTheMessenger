@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="WhatTheMessenger.Application/WhatTheMessenger.Application.csproj" Id="f7277080-5d83-4536-9e96-7fb68e8379fd" />
+  <Project Path="WhatTheMessenger.Core/WhatTheMessenger.Core.csproj" Id="7896bb71-e870-4cc9-9403-2ebef0d13e14" />
+  <Project Path="WhatTheMessenger.Infrastructure/WhatTheMessenger.Infrastructure.csproj" Id="4460085d-e982-4ea3-be48-04f88e674992" />
+  <Project Path="WhatTheMessenger.Server/WhatTheMessenger.Server.csproj" Id="a4c4cfe7-66ab-4d96-9158-2390a8cd258e" />
+</Solution>

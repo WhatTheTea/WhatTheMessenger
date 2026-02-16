@@ -1,0 +1,58 @@
+name: what-the-messenger
+
+services:
+  wtm-db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Q1234567890y
+      POSTGRES_DB: whatthemessenger
+    ports:
+      - "5432:5432"
+    volumes:
+      - wtm-db-data:/var/lib/postgresql/data/18
+    restart: unless-stopped
+    profiles:
+      - deploy
+      - infra
+
+  wtm-pgadmin:
+    restart: unless-stopped
+    image: "dpage/pgadmin4:9.12"
+    deploy:
+       resources:
+         limits:
+           cpus: "0.5"
+           memory: "512M"
+    ports:
+      - 5440:80
+    volumes:
+      - wtm-pgadmin-data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: Q1234567890y
+      PGADMIN_DEFAULT_EMAIL: a@a.com
+    depends_on:
+      - wtm-db
+    profiles:
+      - deploy
+      - infra
+
+volumes:
+  wtm-db-data:
+  wtm-pgadmin-data:
+
+  # lm-api:
+  #   container_name: lm-api
+  #   env_file: .env
+  #   depends_on:
+  #     - lm-pg
+  #   volumes:
+  #     - ./src:/law-monitor
+  #   build: .
+  #   ports:
+  #     - 4002:8000
+  #   networks:
+  #     - lm-net
+  #   command: uvicorn main:api --host 0.0.0.0 --port 8000
+  #   profiles:
+  #     - deploy
