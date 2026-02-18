@@ -22,10 +22,19 @@ builder.Services.AddAuthentication(options =>
 
 var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException("Connection string not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    if (builder.Configuration.GetValue<bool>("inmemory"))
+    {
+        options.UseInMemoryDatabase("WhatTheMessenger");
+        return;
+    }
+
     options.UseNpgsql(connectionString, builder =>
     {
         builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
-    }));
+    });
+
+});
 if (builder.Environment.IsDevelopment())
 {
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
