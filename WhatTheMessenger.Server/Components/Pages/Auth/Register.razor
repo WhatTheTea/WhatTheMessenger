@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.WebUtilities
 @using Microsoft.AspNetCore.Identity
 @using WhatTheMessenger.Core.Models
+@using WhatTheMessenger.Application.Models
 
 @inject NavigationManager NavigationManager
 @inject IUserStore<User> UserStore
@@ -69,18 +70,5 @@
 
         await SignInManager.SignInAsync(user, true);
         NavigationManager.NavigateTo("/Chats/");
-    }
-
-    public sealed record RegisterModel
-    {
-        [StringLength(100, MinimumLength = 1)]
-        public required string Nickname { get; set; }
-
-        [StringLength(100, MinimumLength = 1)]
-        public required string Login { get; set; }
-
-        [StringLength(100, MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        public required string Password { get; set; }
     }
 }

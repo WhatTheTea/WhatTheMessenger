@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.WebUtilities
 @using Microsoft.AspNetCore.Identity
 @using WhatTheMessenger.Core.Models
+@using WhatTheMessenger.Application.Models
 
 @inject NavigationManager NavigationManager
 @inject IUserStore<User> UserStore
@@ -61,17 +62,5 @@
         {
             ErrorMessage = "Failed to sign in";
         }
-    }
-
-    public sealed record LoginModel
-    {
-        [StringLength(100, MinimumLength = 1)]
-        public required string Login { get; set; }
-
-        [StringLength(100, MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        public required string Password { get; set; }
-
-        public bool RememberMe { get; set; }
     }
 }
