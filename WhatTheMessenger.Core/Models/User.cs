@@ -10,5 +10,5 @@ public sealed class User : IdentityUser<Guid>
         set;
     }
 
-    public IEnumerable<Chat> Chats { get; set; } = [];
+    public List<Chat> Chats { get; set; } = [];
 }

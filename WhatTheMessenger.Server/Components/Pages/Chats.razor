@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Identity
 @using WhatTheMessenger.Core.Models
 @using WhatTheMessenger.Infrastructure.DataAccess
+@using WhatTheMessenger.Server.Components.Shared
 
 @inject UserManager<User> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -28,39 +29,65 @@
     }
     else
     {
-        <ul>
-            @foreach (var chat in userChats)
-            {
-                <li>@chat.Name</li>
-            }
-        </ul>
+        <div>
+
+                @foreach (var chat in userChats)
+                {
+                    <div class="row">
+                        <ChatItem Chat="@chat"/>
+                    </div>
+                }
+        </div>
     }
+
+    <button @onclick="CreateChat">New</button>
 </AuthorizeView>
 
 @code {
-    private List<Chat>? userChats;
+    private List<Chat> userChats = [];
+    private User currentUser = default!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+
         if (firstRender)
         {
-            await LoadChatsAsync();
+            currentUser = await GetUserFromAuthAsync() ?? throw new InvalidOperationException("User must be present here");
+            LoadChats(currentUser);
         }
 
         StateHasChanged();
     }
 
-    private async Task LoadChatsAsync()
+    private async Task CreateChat()
+    {
+        var chat = new Chat()
+        {
+            Id = default!,
+            Messages = [],
+            Users = [currentUser]
+        };
+
+        await DbContext.Chats.AddAsync(chat);
+        LoadChats(currentUser);
+
+        StateHasChanged();
+    }
+
+    private void LoadChats(User user)
+    {
+        userChats = currentUser!.Chats.ToList();
+    }
+
+    private async Task<User?> GetUserFromAuthAsync()
     {
         var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
         if (!(state.User.Identity?.IsAuthenticated ?? false))
-            return;
+            return null;
 
         var userId = state.User.FindFirst(x => x.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
         var userGuid = Guid.Parse(userId!.Value);
-        var user = await DbContext.Users.FindAsync(userGuid);
-
-        userChats = user!.Chats.ToList();
+        return await DbContext.Users.FindAsync(userGuid) ?? throw new InvalidOperationException("User must be present here");
     }
 }

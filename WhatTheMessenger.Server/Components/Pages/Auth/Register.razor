@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Identity
 @using WhatTheMessenger.Core.Models
 @using WhatTheMessenger.Application.Models
+@using WhatTheMessenger.Server.Components.Shared.Primitives
 
 @inject NavigationManager NavigationManager
 @inject IUserStore<User> UserStore
@@ -18,22 +19,34 @@
     <DataAnnotationsValidator />
     <ValidationSummary role="alert" />
     @Message
-    <div>
-        Nickname:
-        <InputText @bind-Value="Model!.Nickname" type="none"/>
-    </div>
+    <div class="w-25 rounded-2 bg-body-secondary p-3 text-start">
+        <div class="row mb-1 mt-1">
+            <span class="col-3">
+                Nickname:
+            </span>
+            <InputText @bind-Value="Model!.Nickname" type="text" class="col rounded-2 border-0"/>
+        </div>
 
-    <div>
-        Login:
-        <InputText @bind-Value="Model!.Login"/>
-    </div>
+        <div class="row mb-1 mt-1">
+            <span class="col-3">
+                Login:
+            </span>
+            <InputText @bind-Value="Model!.Login" type="text" class="col rounded-2 border-0" />
+        </div>
 
-    <div>
-        Password:
-        <InputText @bind-Value="Model!.Password" type="password" />
-    </div>
+        <div class="row mb-1 mt-1">
+            <span class="col-3">
+                Password:
+            </span>
+            <InputText @bind-Value="Model!.Password" type="password" class="col rounded-2 border-0" />
+        </div>
 
-    <button type="submit">Register</button>
+        <div class="row mb-1 mt-4">
+            <button type="submit" class="rounded bg-primary text-white border-0 p-1">
+                Register
+            </button>
+        </div>
+    </div>
 </EditForm>
 
 @code {
