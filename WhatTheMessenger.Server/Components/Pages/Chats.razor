@@ -47,14 +47,14 @@
 
 @code {
     private List<Chat> userChats = [];
-    private User? currentUser = default;
+    private User currentUser = default!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
 
         if (firstRender)
         {
-            currentUser = await GetUserFromAuthAsync();
+            currentUser = (await GetUserFromAuthAsync())!;
 
             if (currentUser is null)
             {
@@ -70,14 +70,8 @@
 
     private async Task CreateChat()
     {
-        var chat = new Chat()
-        {
-            Id = default!,
-            Messages = [],
-            Users = [currentUser]
-        };
-
-        await DbContext.Chats.AddAsync(chat);
+        currentUser.CreateChat();
+        await DbContext.SaveChangesAsync();
         LoadChats(currentUser);
 
         StateHasChanged();

@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+using WhatTheMessenger.Application.Interfaces;
+using WhatTheMessenger.Application.Services;
 using WhatTheMessenger.Core.Models;
 using WhatTheMessenger.Infrastructure.DataAccess;
 
 using WhatTheMessenger.Server.Components;
+using WhatTheMessenger.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +24,7 @@ builder.Services.AddAuthentication(options =>
     .AddIdentityCookies();
 
 var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException("Connection string not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<IAppDbContext, ApplicationDbContext>(options =>
 {
     if (builder.Configuration.GetValue<bool>("inmemory"))
     {
@@ -49,6 +52,8 @@ builder.Services.AddIdentityCore<User>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
 var app = builder.Build();
 

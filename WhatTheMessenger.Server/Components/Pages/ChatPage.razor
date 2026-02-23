@@ -3,13 +3,15 @@
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
+@using WhatTheMessenger.Application.Interfaces
+@using WhatTheMessenger.Application.Services
 @using WhatTheMessenger.Core.Models
 @using WhatTheMessenger.Application.Models
 @using WhatTheMessenger.Infrastructure.DataAccess
 
 @inject NavigationManager Navigation
-@inject ApplicationDbContext DbContext
-@inject AuthenticationStateProvider AuthStateProvider
+@inject IAppDbContext DbContext
+@inject ICurrentUserService CurrentUserService
 
 <h3>Chat</h3>
 
@@ -63,8 +65,7 @@ else
     {
         if (firstRender)
         {
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = await CurrentUserService.GetUserId();
 
             if (userId == null)
             {
@@ -72,16 +73,16 @@ else
                 return;
             }
 
-            chat = await DbContext.Chats.FindAsync(ChatId);
+            chat = (await DbContext.Chats.FindAsync(ChatId))!;
 
-            if (chat == null || !chat.Users.Any(u => u.Id.ToString() == userId))
+            if (!(chat?.HasUser(userId.Value) ?? false))
             {
                 Navigation.NavigateTo("/chats");
                 return;
             }
 
             messages = chat.Messages.OrderBy(m => m.SentAt).ToList();
-            
+
             StateHasChanged();
         }
     }
@@ -90,31 +91,24 @@ else
     {
         if (newMessage == null || string.IsNullOrWhiteSpace(newMessage.Content))
             return;
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        if (userId == null)
+
+        var userId = await CurrentUserService.GetUserId();
+        if (!userId.HasValue)
         {
             Navigation.NavigateTo("/login");
             return;
         }
+
         var chat = await DbContext.Chats.FindAsync(ChatId);
-        if (chat == null || !chat.Users.Any(u => u.Id.ToString() == userId))
+        if (!(chat?.HasUser(userId.Value) ?? false))
         {
             Navigation.NavigateTo("/chats");
             return;
         }
-        var message = new Message
-        {
-            Id = default!,
-            Content = newMessage.Content,
-            SentAt = DateTime.UtcNow,
-            Sender = await DbContext.Users.FindAsync(Guid.Parse(userId)),
-            Chat = chat,
-            Status = MessageStatus.Sent
-        };
-        await DbContext.Messages.AddAsync(message);
+
+        chat.SendMessage(userId.Value, newMessage.Content);
+
         await DbContext.SaveChangesAsync();
-        messages.Add(message);
         newMessage.Content = string.Empty;
         StateHasChanged();
     }
