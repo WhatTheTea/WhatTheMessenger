@@ -4,14 +4,15 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
+@using WhatTheMessenger.Application.Interfaces
+@using WhatTheMessenger.Application.Services
 @using WhatTheMessenger.Core.Models
 @using WhatTheMessenger.Infrastructure.DataAccess
 @using WhatTheMessenger.Server.Components.Shared
 
-@inject UserManager<User> UserManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject ApplicationDbContext DbContext
+@inject IAppDbContext DbContext
 @inject NavigationManager Navigation
+@inject ICurrentUserService CurrentUserService
 
 <PageTitle>Chats</PageTitle>
 
@@ -89,13 +90,7 @@
 
     private async Task<User?> GetUserFromAuthAsync()
     {
-        var state = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-
-        if (!(state.User.Identity?.IsAuthenticated ?? false))
-            return null;
-
-        var userId = state.User.FindFirst(x => x.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
-        var userGuid = Guid.Parse(userId!.Value);
+        var userGuid = await CurrentUserService.GetUserId();
         return await DbContext.Users.FindAsync(userGuid);
     }
 }

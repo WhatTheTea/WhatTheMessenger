@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WhatTheMessenger.Application\WhatTheMessenger.Application.csproj" />
     <ProjectReference Include="..\WhatTheMessenger.Core\WhatTheMessenger.Core.csproj" />
   </ItemGroup>
 
