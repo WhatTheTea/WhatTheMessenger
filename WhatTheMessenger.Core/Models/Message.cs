@@ -11,7 +11,8 @@ public enum MessageStatus
 public sealed class Message
 {
     public Guid Id { get; set; }
-    public required Chat Chat { get; set; }
+    public Chat Chat { get; set; }
+    public Guid ChatId { get; set; }
     public User Sender { get; set; } = null!;
     public Guid SenderId { get; set; }
     public required string Content { get; set; }

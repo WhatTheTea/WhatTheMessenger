@@ -55,6 +55,8 @@ builder.Services.AddIdentityCore<User>(options =>
 
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
+builder.Services.AddScoped<IChatService, ChatService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

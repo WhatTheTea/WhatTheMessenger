@@ -12,6 +12,7 @@
 @inject NavigationManager Navigation
 @inject IAppDbContext DbContext
 @inject ICurrentUserService CurrentUserService
+@inject IChatService ChatService
 
 <h3>Chat</h3>
 
@@ -57,7 +58,6 @@ else
     [Parameter]
     public Guid ChatId { get; set; }
 
-    private Chat chat = default!;
     private List<Message> messages = null!;
     private NewMessageModel newMessage = new() { Content = string.Empty };
 
@@ -73,7 +73,7 @@ else
                 return;
             }
 
-            chat = (await DbContext.Chats.FindAsync(ChatId))!;
+            var chat = (await DbContext.Chats.FindAsync(ChatId))!;
 
             if (!(chat?.HasUser(userId.Value) ?? false))
             {
@@ -106,9 +106,9 @@ else
             return;
         }
 
-        chat.SendMessage(userId.Value, newMessage.Content);
+        var message = await ChatService.SendMessage(newMessage, chat, userId.Value);
+        messages.Add(message);
 
-        await DbContext.SaveChangesAsync();
         newMessage.Content = string.Empty;
         StateHasChanged();
     }
