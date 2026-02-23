@@ -11,6 +11,7 @@
 @inject UserManager<User> UserManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ApplicationDbContext DbContext
+@inject NavigationManager Navigation
 
 <PageTitle>Chats</PageTitle>
 
@@ -25,7 +26,7 @@
     }
     else if (!userChats.Any())
     {
-        <p>You don't have any chats yet.</p>
+        <p class="alert alert-info">You don't have any chats yet.</p>
     }
     else
     {
@@ -45,14 +46,21 @@
 
 @code {
     private List<Chat> userChats = [];
-    private User currentUser = default!;
+    private User? currentUser = default;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
 
         if (firstRender)
         {
-            currentUser = await GetUserFromAuthAsync() ?? throw new InvalidOperationException("User must be present here");
+            currentUser = await GetUserFromAuthAsync();
+
+            if (currentUser is null)
+            {
+                Navigation.NavigateTo("auth/logout");
+                return;
+            }
+
             LoadChats(currentUser);
         }
 
@@ -88,6 +96,6 @@
 
         var userId = state.User.FindFirst(x => x.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
         var userGuid = Guid.Parse(userId!.Value);
-        return await DbContext.Users.FindAsync(userGuid) ?? throw new InvalidOperationException("User must be present here");
+        return await DbContext.Users.FindAsync(userGuid);
     }
 }

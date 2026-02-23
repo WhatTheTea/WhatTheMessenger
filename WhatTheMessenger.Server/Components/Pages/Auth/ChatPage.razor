@@ -1,0 +1,121 @@
+﻿@page "/chats/{chatId:guid}"
+@rendermode InteractiveServer
+@attribute [Authorize]
+
+@using Microsoft.AspNetCore.Authorization
+@using WhatTheMessenger.Core.Models
+@using WhatTheMessenger.Application.Models
+@using WhatTheMessenger.Infrastructure.DataAccess
+
+@inject NavigationManager Navigation
+@inject ApplicationDbContext DbContext
+@inject AuthenticationStateProvider AuthStateProvider
+
+<h3>Chat</h3>
+
+<PageTitle>WhatTheMessenger</PageTitle>
+
+@if (messages == null)
+{
+    <p>Loading your chat...</p>
+}
+else if (!messages.Any())
+{
+    <p class="alert alert-info">You don't have any messages yet.</p>
+}
+else
+{
+    <div>
+        @foreach (var message in messages)
+        {
+            <div class="row">
+               @message.Content
+            </div>
+        }
+    </div>
+}
+
+<EditForm Model="newMessage" method="post" OnValidSubmit="HandleValidSubmit" FormName="newMessageForm" class="fixed-bottom">
+    <DataAnnotationsValidator />
+    <ValidationSummary role="alert" />
+
+    <div class="rounded-2 p-3 row bg-body-secondary">
+        <div class="col mb-1 mt-1">
+            <InputText @bind-Value="newMessage.Content" type="text" writingsuggestions="false" autocomplete="off" class="rounded-2 border-0 p-2 w-100" />
+        </div>
+        <div class="col-auto mb-1 mt-1">
+            <button type="submit" class="rounded bg-primary text-white border-0 p-2">
+                Send
+            </button>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Guid ChatId { get; set; }
+
+    private Chat chat = default!;
+    private List<Message> messages = null!;
+    private NewMessageModel newMessage = new() { Content = string.Empty };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (userId == null)
+            {
+                Navigation.NavigateTo("/login");
+                return;
+            }
+
+            chat = await DbContext.Chats.FindAsync(ChatId);
+
+            if (chat == null || !chat.Users.Any(u => u.Id.ToString() == userId))
+            {
+                Navigation.NavigateTo("/chats");
+                return;
+            }
+
+            messages = chat.Messages.OrderBy(m => m.SentAt).ToList();
+            
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (newMessage == null || string.IsNullOrWhiteSpace(newMessage.Content))
+            return;
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userId = authState.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (userId == null)
+        {
+            Navigation.NavigateTo("/login");
+            return;
+        }
+        var chat = await DbContext.Chats.FindAsync(ChatId);
+        if (chat == null || !chat.Users.Any(u => u.Id.ToString() == userId))
+        {
+            Navigation.NavigateTo("/chats");
+            return;
+        }
+        var message = new Message
+        {
+            Id = default!,
+            Content = newMessage.Content,
+            SentAt = DateTime.UtcNow,
+            Sender = await DbContext.Users.FindAsync(Guid.Parse(userId)),
+            Chat = chat,
+            Status = MessageStatus.Sent
+        };
+        await DbContext.Messages.AddAsync(message);
+        await DbContext.SaveChangesAsync();
+        messages.Add(message);
+        newMessage.Content = string.Empty;
+        StateHasChanged();
+    }
+}
