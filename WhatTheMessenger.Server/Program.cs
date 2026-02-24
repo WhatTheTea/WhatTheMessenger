@@ -6,7 +6,7 @@ using WhatTheMessenger.Application.Services;
 using WhatTheMessenger.Core.Models;
 using WhatTheMessenger.Infrastructure.DataAccess;
 
-using WhatTheMessenger.Server.Components;
+using WhatTheMessenger.Server.App;
 using WhatTheMessenger.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
