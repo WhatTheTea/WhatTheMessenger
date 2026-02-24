@@ -1,0 +1,41 @@
+using System.ComponentModel.DataAnnotations;
+using WhatTheMessenger.Core.Models;
+
+namespace WhatTheMessenger.Application.Models;
+
+public sealed record NewMessageModel
+{
+    [StringLength(int.MaxValue, MinimumLength = 1)]
+    public required string Content { get; set; } = string.Empty;
+}
+
+public sealed record SendMessageModel
+{
+    public required string Content { get; set; }
+    public required Guid ChatId { get; set; }
+
+    public static SendMessageModel From(NewMessageModel newMessage, Guid chatId) =>
+        new()
+        {
+            Content = newMessage.Content,
+            ChatId = chatId
+        };
+
+    public static SendMessageModel From(Message message) =>
+        new()
+        {
+            Content = message.Content,
+            ChatId = message.ChatId
+        };
+}
+
+public sealed record NewChatModel
+{
+    public required Guid ChatId { get; set; }
+
+    public static NewChatModel From(Chat chat) =>
+        new()
+        {
+            ChatId = chat.Id,
+        };
+}
