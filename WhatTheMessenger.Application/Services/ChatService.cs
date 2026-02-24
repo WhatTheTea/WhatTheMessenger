@@ -13,7 +13,7 @@ public interface IChatService
     Task<Message> SendMessage(NewMessageModel message, Chat chat, Guid userId);
 }
 
-public sealed class ChatService(IAppDbContext dbContext) : IChatService
+public sealed class ChatService(IAppDbContext dbContext, IChatNotificationService notificationService) : IChatService
 {
     public async Task<Message> SendMessage(NewMessageModel model, Chat chat, Guid userId)
     {

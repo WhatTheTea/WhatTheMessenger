@@ -14,14 +14,14 @@ public sealed record SendMessageModel
     public required string Content { get; set; }
     public required Guid ChatId { get; set; }
 
-    public static SendMessageModel From(NewMessageModel newMessage, Guid chatId) =>
+    public static MessageDto From(NewMessageModel newMessage, Guid chatId) =>
         new()
         {
             Content = newMessage.Content,
             ChatId = chatId
         };
 
-    public static SendMessageModel From(Message message) =>
+    public static MessageDto From(Message message) =>
         new()
         {
             Content = message.Content,
@@ -29,11 +29,11 @@ public sealed record SendMessageModel
         };
 }
 
-public sealed record NewChatModel
+public sealed record ChatDto
 {
     public required Guid ChatId { get; set; }
 
-    public static NewChatModel From(Chat chat) =>
+    public static ChatDto From(Chat chat) =>
         new()
         {
             ChatId = chat.Id,

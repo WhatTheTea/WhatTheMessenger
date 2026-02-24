@@ -5,9 +5,9 @@ namespace WhatTheMessenger.Infrastructure.Hubs;
 
 public interface IChatHub
 {
-    public Task MessageReceived(SendMessageModel message);
+    public Task MessageReceived(MessageDto message);
 
-    public Task ChatCreated(NewChatModel chat);
+    public Task ChatCreated(ChatDto chat);
 }
 
 public sealed class ChatHub : Hub<IChatHub>
