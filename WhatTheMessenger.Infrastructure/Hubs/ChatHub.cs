@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using WhatTheMessenger.Application.Models;
 
@@ -10,6 +11,7 @@ public interface IChatHub
     public Task ChatCreated(ChatDto chat);
 }
 
+[Authorize]
 public sealed class ChatHub : Hub<IChatHub>
 {
 

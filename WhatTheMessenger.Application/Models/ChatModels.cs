@@ -20,19 +20,16 @@ public sealed record MessageDto
 {
     public required string Content { get; set; }
     public required Guid ChatId { get; set; }
-
-    public static MessageDto From(NewMessageModel newMessage, Guid chatId) =>
-        new()
-        {
-            Content = newMessage.Content,
-            ChatId = chatId
-        };
+    public required Guid SenderId { get; set; }
+    public required string SenderName { get; set; } 
 
     public static MessageDto From(Message message) =>
         new()
         {
             Content = message.Content,
-            ChatId = message.ChatId
+            ChatId = message.ChatId,
+            SenderId = message.SenderId,
+            SenderName = message.Sender.DisplayName
         };
 }
 

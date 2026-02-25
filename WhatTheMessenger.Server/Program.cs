@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
 using WhatTheMessenger.Application.Interfaces;
 using WhatTheMessenger.Application.Services;
 using WhatTheMessenger.Core.Models;
 using WhatTheMessenger.Infrastructure.DataAccess;
-
+using WhatTheMessenger.Infrastructure.Hubs;
+using WhatTheMessenger.Infrastructure.Services;
 using WhatTheMessenger.Server.App;
 using WhatTheMessenger.Server.Services;
 
@@ -15,6 +17,11 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSignalR();
+builder.Services.AddResponseCompression(opts =>
+{
+   opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+       [ "application/octet-stream" ]);
+});
 
 builder.Services.AddCascadingAuthenticationState();
 
@@ -24,6 +31,7 @@ builder.Services.AddAuthentication(options =>
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
+builder.Services.AddHttpContextAccessor();
 
 var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException("Connection string not found.");
 builder.Services.AddDbContext<IAppDbContext, ApplicationDbContext>(options =>
@@ -57,6 +65,7 @@ builder.Services.AddIdentityCore<User>(options =>
 
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
+builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 
 var app = builder.Build();
@@ -80,5 +89,9 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.UseResponseCompression();
+
+app.MapHub<ChatHub>("/hubs/chat");
 
 app.Run();

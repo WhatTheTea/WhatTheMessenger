@@ -4,16 +4,21 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.SignalR.Client
+@using System.Net
 @using WhatTheMessenger.Application.Interfaces
+@using WhatTheMessenger.Application.Models
 @using WhatTheMessenger.Application.Services
 @using WhatTheMessenger.Core.Models
 @using WhatTheMessenger.Infrastructure.DataAccess
+@using WhatTheMessenger.Infrastructure.Hubs
 @using WhatTheMessenger.Server.App.Components
 
 @inject IAppDbContext DbContext
 @inject NavigationManager Navigation
 @inject ICurrentUserService CurrentUserService
 @inject IChatService ChatService
+@inject IHttpContextAccessor HttpContextAccessor
 
 <PageTitle>Chats</PageTitle>
 
@@ -34,12 +39,12 @@
     {
         <div>
 
-                @foreach (var chat in userChats)
-                {
-                    <div class="row">
-                        <ChatItem Chat="@chat"/>
-                    </div>
-                }
+            @foreach (var chat in userChats)
+            {
+                <div class="row">
+                    <ChatItem Chat="@chat" />
+                </div>
+            }
         </div>
     }
 
@@ -49,6 +54,7 @@
 @code {
     private List<Chat> userChats = [];
     private User currentUser = default!;
+    private HubConnection? hub;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -64,17 +70,36 @@
             }
 
             LoadChats(currentUser);
+            hub = new HubConnectionBuilder()
+               .WithUrl(Navigation.ToAbsoluteUri("/hubs/chat"), options => {
+                   options.Headers.Add("Cookie", HttpContextAccessor.HttpContext?.Request?.Headers?.Cookie ?? string.Empty);
+               })
+               .Build();
+
+            hub.On<ChatDto>("ChatCreated", HandleNewChat);
+            await hub.StartAsync();
         }
 
         StateHasChanged();
     }
 
+    private async Task HandleNewChat(ChatDto chatDto)
+    {
+        var chat = await DbContext.Chats.FindAsync(chatDto.ChatId);
+
+        if (chat is not null)
+        {
+            userChats.Add(chat);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
     private async Task CreateChat()
     {
-        await ChatService.CreateChatAsync(new() {Name = null, Participants = []}, currentUser);
-        LoadChats(currentUser);
+        await ChatService.CreateChatAsync(new() { Name = null, Participants = [currentUser.Id] });
+        @* LoadChats(currentUser); *@
 
-        StateHasChanged();
+        @* StateHasChanged(); *@
     }
 
     private void LoadChats(User user)

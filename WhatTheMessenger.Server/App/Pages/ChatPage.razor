@@ -3,16 +3,19 @@
 @attribute [Authorize]
 
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.SignalR.Client
 @using WhatTheMessenger.Application.Interfaces
 @using WhatTheMessenger.Application.Services
 @using WhatTheMessenger.Core.Models
 @using WhatTheMessenger.Application.Models
 @using WhatTheMessenger.Infrastructure.DataAccess
+@using WhatTheMessenger.Infrastructure.Hubs
 
 @inject NavigationManager Navigation
 @inject IAppDbContext DbContext
 @inject ICurrentUserService CurrentUserService
 @inject IChatService ChatService
+@inject IHttpContextAccessor HttpContextAccessor
 
 <h3>Chat</h3>
 
@@ -32,7 +35,7 @@ else
         @foreach (var message in messages)
         {
             <div class="row">
-               @message.Content
+               @message.SenderName : @message.Content
             </div>
         }
     </div>
@@ -58,8 +61,10 @@ else
     [Parameter]
     public Guid ChatId { get; set; }
 
-    private List<Message> messages = null!;
+    private List<MessageDto> messages = null!;
     private NewMessageModel newMessage = new() { Content = string.Empty };
+
+    private HubConnection? hub;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -81,9 +86,27 @@ else
                 return;
             }
 
-            messages = chat.Messages.OrderBy(m => m.SentAt).ToList();
+            messages = chat.Messages.OrderBy(m => m.SentAt).Select(x => MessageDto.From(x)).ToList();
 
             StateHasChanged();
+
+            hub = new HubConnectionBuilder()
+               .WithUrl(Navigation.ToAbsoluteUri("/hubs/chat"), options => {
+                   options.Headers.Add("Cookie", HttpContextAccessor.HttpContext?.Request?.Headers?.Cookie ?? string.Empty);
+               })
+               .Build();
+            
+            hub.On<MessageDto>("MessageReceived", HandleNewMessage);
+            await hub.StartAsync();
+        }
+    }
+
+    private async Task HandleNewMessage(MessageDto messageDto)
+    {
+        if(ChatId == messageDto.ChatId)
+        {
+            messages.Add(messageDto);
+            await InvokeAsync(StateHasChanged);
         }
     }
 
@@ -107,7 +130,7 @@ else
         }
 
         var message = await ChatService.SendMessageAsync(newMessage, chat, userId.Value);
-        messages.Add(message);
+        @* messages.Add(MessageDto.From(message)); *@
 
         newMessage.Content = string.Empty;
         StateHasChanged();
