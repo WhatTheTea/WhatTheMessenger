@@ -1,33 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NSubstitute;
+﻿using NSubstitute;
 using Shouldly;
 using WhatTheMessenger.Application.Interfaces;
 using WhatTheMessenger.Application.Services;
-using WhatTheMessenger.Infrastructure.DataAccess;
 using WhatTheMessenger.Tests.Utils;
 
 namespace WhatTheMessenger.Tests;
 
-public class ChatTests
+public sealed class ChatTests(SqliteFixture dbFixture) : IClassFixture<SqliteFixture> 
 {
-    private readonly IAppDbContext dbContext;
-
-    public ChatTests()
-    {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-        .UseInMemoryDatabase("WhatTheMessenger")
-        .Options;
-
-        dbContext = new ApplicationDbContext(options);
-    }
-
     [Fact]
     public async Task ChatIsCreated()
     {
+        using var _ = dbFixture.GetAppDbContext(out var dbContext);
         var chatNotificationService = Substitute.For<IChatNotificationService>();
         var chatService = new ChatService(dbContext, chatNotificationService);
         var user = UserFactory.Create();
 
+        dbContext.Users.Add(user);
         var chat = await chatService.CreateChatAsync(new()
         {
             Name = "test",
@@ -35,5 +24,6 @@ public class ChatTests
         }, user);
 
         await chatNotificationService.Received().NotifyChatCreated(Arg.Is(chat));
+        dbContext.Chats.Find(chat.Id).ShouldNotBeNull();
     }
 }
