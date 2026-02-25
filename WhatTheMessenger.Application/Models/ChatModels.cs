@@ -9,7 +9,14 @@ public sealed record NewMessageModel
     public required string Content { get; set; } = string.Empty;
 }
 
-public sealed record SendMessageModel
+public sealed record NewChatModel
+{
+    public required string? Name { get; set; }
+
+    public required List<Guid> Participants { get; set; }
+}
+
+public sealed record MessageDto
 {
     public required string Content { get; set; }
     public required Guid ChatId { get; set; }
