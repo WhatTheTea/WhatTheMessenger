@@ -1,18 +1,23 @@
 using System;
+using WhatTheMessenger.Application.Interfaces;
 using WhatTheMessenger.Core.Models;
 
 namespace WhatTheMessenger.Tests.Utils;
 
-public sealed class UserFactory
+public sealed class UserFactory(IAppDbContext dbContext)
 {
-    public static User Create()
+    public User Create()
     {
         var id = Guid.NewGuid();
-        return new()
+        var user = new User()
         {
             Id = id,
             DisplayName = $"Test {id}",
             UserName = $"test-{id}"
         };
+        dbContext.Users.Add(user);
+        dbContext.SaveChangesAsync().GetAwaiter().GetResult();
+
+        return user;
 }
 }

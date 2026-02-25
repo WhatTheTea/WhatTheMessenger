@@ -13,17 +13,4 @@ public sealed class User : IdentityUser<Guid>
     }
 
     public IReadOnlyCollection<Chat> Chats { get => chats.AsReadOnly(); }
-
-    public Chat CreateChat(string? name = null)
-    {
-        var chat = new Chat
-        {
-            Name = name,
-            Users = [this]
-        };
-
-        chats.Add(chat);
-
-        return chat;
-    }
 }
