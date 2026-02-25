@@ -106,7 +106,7 @@ else
             return;
         }
 
-        var message = await ChatService.SendMessage(newMessage, chat, userId.Value);
+        var message = await ChatService.SendMessageAsync(newMessage, chat, userId.Value);
         messages.Add(message);
 
         newMessage.Content = string.Empty;

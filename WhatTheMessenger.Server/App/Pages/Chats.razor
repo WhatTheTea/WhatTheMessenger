@@ -13,6 +13,7 @@
 @inject IAppDbContext DbContext
 @inject NavigationManager Navigation
 @inject ICurrentUserService CurrentUserService
+@inject IChatService ChatService
 
 <PageTitle>Chats</PageTitle>
 
@@ -70,8 +71,7 @@
 
     private async Task CreateChat()
     {
-        currentUser.CreateChat();
-        await DbContext.SaveChangesAsync();
+        await ChatService.CreateChatAsync(new() {Name = null, Participants = []}, currentUser);
         LoadChats(currentUser);
 
         StateHasChanged();
