@@ -1,48 +1,46 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Shouldly;
 using WhatTheMessenger.Application.Interfaces;
 using WhatTheMessenger.Infrastructure.DataAccess;
 
 namespace WhatTheMessenger.Tests.Utils;
 
-public sealed class Disposable<T>(Action dispose, T value) : IDisposable
+public sealed class Disposable(Action dispose) : IDisposable
 {
-    public T Value => value;
-
     public void Dispose() => dispose();
-
-    public static implicit operator T(Disposable<T> disposable) => disposable.Value;
 }
 
 public sealed class SqliteFixture : IDisposable
 {
-    private readonly ApplicationDbContext dbContext;
     private readonly SqliteConnection sqlite;
 
-    public IDisposable GetAppDbContext(out IAppDbContext db)
+    public ApplicationDbContext GetDbContext()
     {
-        dbContext.Database.EnsureCreated();
-        db = dbContext;
-        return new Disposable<IAppDbContext>(
-        () =>
+        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseSqlite(sqlite)
+            .Options;
+        var appDbContext = new ApplicationDbContext(options);
+
+        return appDbContext;
+    }
+
+    public IDisposable UseDb()
+    {
+        using var context = GetDbContext();
+        context.Database.EnsureCreated();
+
+        return new Disposable(() =>
         {
-            dbContext.Database.EnsureDeleted();
-        },
-        dbContext
-    );
+            using var context = GetDbContext();
+            context.Database.EnsureDeleted();
+            context.Dispose();
+        });
     }
 
     public SqliteFixture()
     {
         sqlite = new("Filename=:memory:");
         sqlite.Open();
-
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-        .UseSqlite(sqlite)
-        .Options;
-
-        dbContext = new ApplicationDbContext(options);
     }
 
     public void Dispose()
