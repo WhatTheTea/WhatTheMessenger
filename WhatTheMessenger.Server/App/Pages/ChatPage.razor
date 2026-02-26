@@ -1,6 +1,7 @@
 ﻿@page "/chats/{chatId:guid}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+@implements IAsyncDisposable
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.SignalR.Client
@@ -16,6 +17,7 @@
 @inject ICurrentUserService CurrentUserService
 @inject IChatService ChatService
 @inject IHttpContextAccessor HttpContextAccessor
+@inject HubConnection HubConnection
 
 <h3>Chat</h3>
 
@@ -63,8 +65,12 @@ else
 
     private List<MessageDto> messages = null!;
     private NewMessageModel newMessage = new() { Content = string.Empty };
+    private IDisposable? messageHandler;
 
-    private HubConnection? hub;
+    public async ValueTask DisposeAsync()
+    {
+        messageHandler?.Dispose(); // unregisters the handler
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -89,15 +95,11 @@ else
             messages = chat.Messages.OrderBy(m => m.SentAt).Select(x => MessageDto.From(x)).ToList();
 
             StateHasChanged();
-
-            hub = new HubConnectionBuilder()
-               .WithUrl(Navigation.ToAbsoluteUri("/hubs/chat"), options => {
-                   options.Headers.Add("Cookie", HttpContextAccessor.HttpContext?.Request?.Headers?.Cookie ?? string.Empty);
-               })
-               .Build();
             
-            hub.On<MessageDto>("MessageReceived", HandleNewMessage);
-            await hub.StartAsync();
+            if (HubConnection.State != HubConnectionState.Connected)
+                await HubConnection.StartAsync();
+
+            messageHandler = HubConnection.On<MessageDto>("MessageReceived", HandleNewMessage);
         }
     }
 

@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.EntityFrameworkCore;
 
 using WhatTheMessenger.Application.Interfaces;
@@ -25,6 +27,18 @@ builder.ConfigureAuth();
 
 builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped(provider =>
+{
+    var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
+    var navigation = provider.GetRequiredService<NavigationManager>();
+    var clientHubConnection = new HubConnectionBuilder()
+        .WithUrl(navigation.ToAbsoluteUri("/hubs/chat"), options => {
+            options.Headers.Add("Cookie", httpContextAccessor.HttpContext?.Request?.Headers?.Cookie ?? string.Empty);
+        })
+        .Build(); 
+    
+    return clientHubConnection;
+});
 
 var app = builder.Build();
 

@@ -1,11 +1,13 @@
 ﻿@page "/chats"
 @rendermode InteractiveServer
 @attribute [Authorize]
+@implements IAsyncDisposable
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.SignalR.Client
 @using System.Net
+@using Microsoft.EntityFrameworkCore
 @using WhatTheMessenger.Application.Interfaces
 @using WhatTheMessenger.Application.Models
 @using WhatTheMessenger.Application.Services
@@ -19,6 +21,7 @@
 @inject ICurrentUserService CurrentUserService
 @inject IChatService ChatService
 @inject IHttpContextAccessor HttpContextAccessor
+@inject HubConnection HubConnection
 
 <PageTitle>Chats</PageTitle>
 
@@ -54,7 +57,12 @@
 @code {
     private List<Chat> userChats = [];
     private User currentUser = default!;
-    private HubConnection? hub;
+    private IDisposable? chatHandler;
+
+    public async ValueTask DisposeAsync()
+    {
+        chatHandler?.Dispose(); // unregisters the handler
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -69,15 +77,12 @@
                 return;
             }
 
-            LoadChats(currentUser);
-            hub = new HubConnectionBuilder()
-               .WithUrl(Navigation.ToAbsoluteUri("/hubs/chat"), options => {
-                   options.Headers.Add("Cookie", HttpContextAccessor.HttpContext?.Request?.Headers?.Cookie ?? string.Empty);
-               })
-               .Build();
+            await LoadChats(currentUser);
 
-            hub.On<ChatDto>("ChatCreated", HandleNewChat);
-            await hub.StartAsync();
+            if (HubConnection.State != HubConnectionState.Connected)
+                await HubConnection.StartAsync();
+
+            chatHandler = HubConnection.On<ChatDto>("ChatCreated", HandleNewChat);
         }
 
         StateHasChanged();
@@ -97,14 +102,11 @@
     private async Task CreateChat()
     {
         await ChatService.CreateChatAsync(new() { Name = null, Participants = [currentUser.Id] });
-        @* LoadChats(currentUser); *@
-
-        @* StateHasChanged(); *@
     }
 
-    private void LoadChats(User user)
+    private async Task LoadChats(User user)
     {
-        userChats = currentUser!.Chats.ToList();
+        userChats = (await ChatService.GetChatsAsync(user.Id)).ToList();
     }
 
     private async Task<User?> GetUserFromAuthAsync()
