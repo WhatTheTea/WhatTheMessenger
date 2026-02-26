@@ -1,15 +1,12 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
 using WhatTheMessenger.Application.Interfaces;
 using WhatTheMessenger.Application.Services;
-using WhatTheMessenger.Core.Models;
-using WhatTheMessenger.Infrastructure.DataAccess;
 using WhatTheMessenger.Infrastructure.Hubs;
 using WhatTheMessenger.Infrastructure.Services;
+using WhatTheMessenger.Server;
 using WhatTheMessenger.Server.App;
-using WhatTheMessenger.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,51 +16,12 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSignalR();
 builder.Services.AddResponseCompression(opts =>
 {
-   opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-       [ "application/octet-stream" ]);
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+    ["application/octet-stream"]);
 });
 
-builder.Services.AddCascadingAuthenticationState();
-
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultScheme = IdentityConstants.ApplicationScheme;
-        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-    })
-    .AddIdentityCookies();
-builder.Services.AddHttpContextAccessor();
-
-var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") ?? throw new InvalidOperationException("Connection string not found.");
-builder.Services.AddDbContext<IAppDbContext, ApplicationDbContext>(options =>
-{
-    if (builder.Configuration.GetValue<bool>("inmemory"))
-    {
-        options.UseInMemoryDatabase("WhatTheMessenger");
-        return;
-    }
-
-    options.UseNpgsql(connectionString, builder =>
-    {
-        builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
-    });
-
-});
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-}
-
-builder.Services.AddIdentityCore<User>(options =>
-    {
-        options.SignIn.RequireConfirmedAccount = false;
-        options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
-        options.Password.RequireNonAlphanumeric = false;
-    })
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddSignInManager()
-    .AddDefaultTokenProviders();
-
-builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.ConfigureDataAccess();
+builder.ConfigureAuth();
 
 builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationService>();
 builder.Services.AddScoped<IChatService, ChatService>();
@@ -74,6 +32,8 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    if (app.Configuration.GetValue<bool>("single-process"))
+        app.EnsureDatabase();
 }
 else
 {

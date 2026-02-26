@@ -1,1 +1,0 @@
-docker compose --profile infra --file $PSScriptRoot/docker-compose.yaml up

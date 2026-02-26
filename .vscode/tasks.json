@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"command": "docker-compose --profile infra --file ${workspaceFolder}/WhatTheMessenger.Server/Properties/docker-compose.yaml up",
+			"label": "docker: infra"
+		},
+		{
+			"type": "shell",
+			"command": "dotnet watch --project WhatTheMessenger.Server -lp 'dev (single-process)'",
+			"isBackground": true,
+			"problemMatcher": "$msCompile",
+			"label": "dotnet: watch (single-process)"
+		}
+	]
+}

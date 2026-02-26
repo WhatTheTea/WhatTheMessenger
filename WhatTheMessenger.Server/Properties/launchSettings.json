@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "http": {
+    "dev": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
@@ -10,12 +10,12 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "In-memory (http)": {
+    "dev (single-process)": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5185",
-      "commandLineArgs": "--inmemory true",
+      "commandLineArgs": "--single-process true",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
