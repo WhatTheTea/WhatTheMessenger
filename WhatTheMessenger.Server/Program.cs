@@ -64,7 +64,10 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.UseResponseCompression();
+if (app.Environment.IsProduction())
+{
+    app.UseResponseCompression();
+}
 
 app.MapHub<ChatHub>("/hubs/chat");
 

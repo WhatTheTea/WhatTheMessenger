@@ -1,0 +1,25 @@
+﻿@using WhatTheMessenger.Core.Models;
+@inject NavigationManager Navigation
+
+<div class="nav-item d-inline">
+    <NavLink class="nav-link" href="@Href" Match="NavLinkMatch.All">
+        <Avatar/> 
+        <div class="mx-1">
+            @ChatName
+        </div>
+    </NavLink>
+</div>
+
+@code {
+    [Parameter]
+    public Chat Chat { get; set; } = default!;
+
+    private string ChatName => Chat.Name ?? string.Join(", ", Chat.Users?.Select(u => u.UserName) ?? Array.Empty<string>());
+
+    private string Href => $"{Navigation.BaseUri}chats/{Chat.Id.ToString()}";
+
+    private void OpenChat()
+    {
+        Navigation.NavigateTo($"/chats/{Chat.Id}");
+    }
+}

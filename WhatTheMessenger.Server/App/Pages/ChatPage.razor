@@ -16,48 +16,54 @@
 @inject IAppDbContext DbContext
 @inject ICurrentUserService CurrentUserService
 @inject IChatService ChatService
-@inject IHttpContextAccessor HttpContextAccessor
 @inject HubConnection HubConnection
 
 <h3>Chat</h3>
 
 <PageTitle>WhatTheMessenger</PageTitle>
 
-@if (messages == null)
-{
-    <p>Loading your chat...</p>
-}
-else if (!messages.Any())
-{
-    <p class="alert alert-info">You don't have any messages yet.</p>
-}
-else
-{
-    <div>
-        @foreach (var message in messages)
-        {
-            <div class="row">
-               @message.SenderName : @message.Content
+<div class="d-flex flex-column" style="height: 85vh;">
+    <div class="flex-grow-1 pb-3">
+    @if (messages == null)
+    {
+        <p>Loading your chat...</p>
+    }
+    else if (!messages.Any())
+    {
+        <p class="alert alert-info">You don't have any messages yet.</p>
+    }
+    else
+    {
+        <div>
+            @foreach (var message in messages)
+            {
+                <div class="row">
+                    @message.SenderName : @message.Content
+                </div>
+            }
+        </div>
+    }
+    </div>
+
+    <div  class="sticky-bottom bg-body">
+        <EditForm Model="newMessage" method="post" OnValidSubmit="HandleValidSubmit" FormName="newMessageForm">
+            <DataAnnotationsValidator />
+            <ValidationSummary role="alert" />
+
+            <div class="rounded-2 p-3 row bg-body-secondary">
+                <div class="col mb-1 mt-1">
+                    <InputText @bind-Value="newMessage.Content" type="text" writingsuggestions="false" autocomplete="off"
+                            class="rounded-2 border-0 p-2 w-100" />
+                </div>
+                <div class="col-auto mb-1 mt-1">
+                    <button type="submit" class="rounded bg-primary text-white border-0 p-2">
+                        Send
+                    </button>
+                </div>
             </div>
-        }
+        </EditForm>
     </div>
-}
-
-<EditForm Model="newMessage" method="post" OnValidSubmit="HandleValidSubmit" FormName="newMessageForm" class="fixed-bottom">
-    <DataAnnotationsValidator />
-    <ValidationSummary role="alert" />
-
-    <div class="rounded-2 p-3 row bg-body-secondary">
-        <div class="col mb-1 mt-1">
-            <InputText @bind-Value="newMessage.Content" type="text" writingsuggestions="false" autocomplete="off" class="rounded-2 border-0 p-2 w-100" />
-        </div>
-        <div class="col-auto mb-1 mt-1">
-            <button type="submit" class="rounded bg-primary text-white border-0 p-2">
-                Send
-            </button>
-        </div>
-    </div>
-</EditForm>
+</div>
 
 @code {
     [Parameter]
@@ -95,7 +101,7 @@ else
             messages = chat.Messages.OrderBy(m => m.SentAt).Select(x => MessageDto.From(x)).ToList();
 
             StateHasChanged();
-            
+
             if (HubConnection.State != HubConnectionState.Connected)
                 await HubConnection.StartAsync();
 
@@ -105,7 +111,7 @@ else
 
     private async Task HandleNewMessage(MessageDto messageDto)
     {
-        if(ChatId == messageDto.ChatId)
+        if (ChatId == messageDto.ChatId)
         {
             messages.Add(messageDto);
             await InvokeAsync(StateHasChanged);

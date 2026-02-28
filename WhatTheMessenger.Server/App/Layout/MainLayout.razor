@@ -7,15 +7,6 @@
 
     <main>
         <div class="top-row px-4">
-            <AuthorizeView>
-                <Authorized>
-                    <a href="/profile">@context.User.Identity?.Name</a>
-                </Authorized>
-                <NotAuthorized>
-                    <a href="/auth/login">Login</a>
-                    <a href="/auth/register">Register</a>
-                </NotAuthorized>
-            </AuthorizeView>
         </div>
 
         <article class="content px-4">

@@ -1,5 +1,4 @@
-﻿@page "/chats"
-@rendermode InteractiveServer
+﻿@rendermode InteractiveServer
 @attribute [Authorize]
 @implements IAsyncDisposable
 
@@ -23,13 +22,7 @@
 @inject IHttpContextAccessor HttpContextAccessor
 @inject HubConnection HubConnection
 
-<PageTitle>Chats</PageTitle>
-
 <AuthorizeView>
-    <h3>
-        Hello @context.User.Identity?.Name!
-    </h3>
-
     @if (userChats == null)
     {
         <p>Loading your chats...</p>
@@ -44,14 +37,21 @@
 
             @foreach (var chat in userChats)
             {
-                <div class="row">
-                    <ChatItem Chat="@chat" />
+                <div class="m-1">
+                    <ChatNavItem Chat="@chat" />
                 </div>
             }
         </div>
     }
 
-    <button @onclick="CreateChat">New</button>
+    <div class="nav-item">
+        <button class="nav-link mx-1" @onclick="CreateChat">
+            <span class="bi-plus-square-fill-nav-menu"/>
+            <div class="mx-1">
+                New
+            </div>
+        </button>
+    </div>
 </AuthorizeView>
 
 @code {
