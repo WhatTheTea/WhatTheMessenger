@@ -5,6 +5,7 @@
 
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.EntityFrameworkCore
 @using WhatTheMessenger.Application.Interfaces
 @using WhatTheMessenger.Application.Services
 @using WhatTheMessenger.Core.Models
@@ -90,7 +91,7 @@
                 return;
             }
 
-            var chat = (await DbContext.Chats.FindAsync(ChatId))!;
+            var chat = (await DbContext.Chats.Include(x => x.Users).Include(x => x.Messages).FirstOrDefaultAsync(x => x.Id == ChatId))!;
 
             if (!(chat?.HasUser(userId.Value) ?? false))
             {
