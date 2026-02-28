@@ -102,7 +102,7 @@
 
             StateHasChanged();
 
-            if (HubConnection.State != HubConnectionState.Connected)
+            if (HubConnection.State is HubConnectionState.Disconnected)
                 await HubConnection.StartAsync();
 
             messageHandler = HubConnection.On<MessageDto>("MessageReceived", HandleNewMessage);

@@ -7,6 +7,9 @@
 @using Microsoft.AspNetCore.SignalR.Client
 @using System.Net
 @using Microsoft.EntityFrameworkCore
+@using System.Reactive.Subjects
+@using System.Reactive;
+@using System.Reactive.Linq
 @using WhatTheMessenger.Application.Interfaces
 @using WhatTheMessenger.Application.Models
 @using WhatTheMessenger.Application.Services
@@ -19,7 +22,7 @@
 @inject NavigationManager Navigation
 @inject ICurrentUserService CurrentUserService
 @inject IChatService ChatService
-@inject IHttpContextAccessor HttpContextAccessor
+@inject IUserService UserService
 @inject HubConnection HubConnection
 
 <AuthorizeView>
@@ -45,28 +48,76 @@
     }
 
     <div class="nav-item">
-        <button class="nav-link mx-1" @onclick="CreateChat">
+        <button class="nav-link mx-1" @onclick="() => IsCreateChatVisible = !IsCreateChatVisible">
             <span class="bi-plus-square-fill-nav-menu"/>
             <div class="mx-1">
                 New
             </div>
         </button>
     </div>
+
+    <Dialog IsVisible="@IsCreateChatVisible" OnConfirm="CreateChat" OnClose="() => IsCreateChatVisible = !IsCreateChatVisible">
+        <EditForm Model="@newChatModel" FormName="newChat" Context="newChat">
+            <div>
+                Chat name:
+                <InputText @bind-Value="@newChatModel.Name"/>
+            </div>
+            <div>
+
+            Add user:
+            <input type="text" @oninput="e => participantQuerySubject.OnNext(e.Value?.ToString() ?? string.Empty)" placeholder="Search users..."/>
+            @if (userSearchResult.Any())
+            {
+                <ul>
+                    @foreach (var user in userSearchResult)
+                    {
+                        <li style="cursor: pointer;" @onclick="() => newChatModel.Participants.Add(user.Id)">@user.UserName</li>
+                    }
+                </ul>
+            }
+            </div>
+
+            <div>
+            Added users:
+            <ul>
+                @foreach (var userId in newChatModel.Participants)
+                {
+                    <li>@userId</li>
+                }
+            </ul>                
+            </div>
+        </EditForm>
+    </Dialog>
 </AuthorizeView>
 
 @code {
     private List<Chat> userChats = [];
+    private NewChatModel newChatModel = new() {Name = string.Empty, Participants = []};
     private User currentUser = default!;
+
+    private Subject<string> participantQuerySubject = new();
+    private User[] userSearchResult = [];
     private IDisposable? chatHandler;
+
+    private bool IsCreateChatVisible
+    {
+        get => field;
+        set
+        {
+            field = value;
+            userSearchResult = [];
+            StateHasChanged();
+        }
+    }
 
     public async ValueTask DisposeAsync()
     {
-        chatHandler?.Dispose(); // unregisters the handler
+        chatHandler?.Dispose();
+        participantQuerySubject.Dispose();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-
         if (firstRender)
         {
             currentUser = (await GetUserFromAuthAsync())!;
@@ -79,10 +130,21 @@
 
             await LoadChats(currentUser);
 
-            if (HubConnection.State != HubConnectionState.Connected)
+            if (HubConnection.State is HubConnectionState.Disconnected)
                 await HubConnection.StartAsync();
 
             chatHandler = HubConnection.On<ChatDto>("ChatCreated", HandleNewChat);
+            
+            participantQuerySubject.Throttle(TimeSpan.FromMilliseconds(350))
+                .DistinctUntilChanged()
+                .Where(q => q.Length >= 2)
+                .SelectMany(q => UserService.FindUsersAsync(q))
+                .ObserveOn(SynchronizationContext.Current!)
+                .Subscribe(results =>
+                {
+                    userSearchResult = results;
+                    StateHasChanged();
+                });
         }
 
         StateHasChanged();
@@ -101,7 +163,11 @@
 
     private async Task CreateChat()
     {
-        await ChatService.CreateChatAsync(new() { Name = null, Participants = [currentUser.Id] });
+        if (string.IsNullOrEmpty(newChatModel.Name))
+            newChatModel.Name = null;
+        newChatModel.Participants.Add(currentUser.Id);
+        await ChatService.CreateChatAsync(newChatModel);
+        IsCreateChatVisible = false;
     }
 
     private async Task LoadChats(User user)
