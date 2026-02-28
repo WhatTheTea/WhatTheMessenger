@@ -27,13 +27,16 @@ builder.ConfigureAuth();
 
 builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped(provider =>
 {
     var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
     var navigation = provider.GetRequiredService<NavigationManager>();
     var clientHubConnection = new HubConnectionBuilder()
         .WithUrl(navigation.ToAbsoluteUri("/hubs/chat"), options => {
-            options.Headers.Add("Cookie", httpContextAccessor.HttpContext?.Request?.Headers?.Cookie ?? string.Empty);
+            var cookie = httpContextAccessor.HttpContext?.Request?.Headers?.Cookie;
+            if(cookie.HasValue)
+                options.Headers.Add("Cookie", cookie.Value.ToString());
         })
         .Build(); 
     
