@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
 import { concatMap, map, Observable, tap } from 'rxjs';
-import { LoginModel } from '../models/login-model';
+import { LoginDTO } from '../models';
 
 type guid = string;
 
@@ -12,7 +12,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(dto: LoginModel): Observable<void> {
+  login(dto: LoginDTO): Observable<void> {
     return this.http
       .post<void>('/api/auth/login', dto, { withCredentials: true })
       .pipe(concatMap(() => this.fetchCurrentUser().pipe(map((_) => {}))));
