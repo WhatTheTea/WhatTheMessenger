@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+
+import { AuthService } from '../../core/auth'
 import { Login } from '../../components/login/login';
 
 @Component({
@@ -7,6 +9,8 @@ import { Login } from '../../components/login/login';
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
+
 export class Home {
-  user : any
+  authService = inject(AuthService);
+  
 }

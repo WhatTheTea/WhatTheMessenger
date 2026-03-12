@@ -7,7 +7,8 @@ type guid = string;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private currentUser = signal<guid | null>(null);
+  private _currentUser = signal<guid | null>(null);
+  currentUser = this._currentUser.asReadonly();
   isAuthenticated = computed(() => this.currentUser() !== null);
 
   constructor(private http: HttpClient) {}
@@ -21,7 +22,7 @@ export class AuthService {
   logout(): Observable<void> {
     return this.http
       .post<void>('/api/auth/logout', {}, { withCredentials: true })
-      .pipe(tap((_) => this.currentUser.set(null)));
+      .pipe(tap((_) => this._currentUser.set(null)));
   }
 
   fetchCurrentUser(): Observable<guid> {
@@ -29,6 +30,6 @@ export class AuthService {
       .get<guid>('/api/auth/me', {
         withCredentials: true,
       })
-      .pipe(tap((user) => this.currentUser.set(user)));
+      .pipe(tap((user) => this._currentUser.set(user)));
   }
 }

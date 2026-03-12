@@ -3,9 +3,12 @@
     <div class="main-card">
         <h1 class="app-title">WhatTheMessenger</h1>
 
-        @if (!user) 
+        @if (!authService.isAuthenticated()) 
         {
             <app-login style="margin-left: auto; margin-right: auto; text-align: center;" />
+        } 
+        @else {
+            <h3>Hello {{ authService.currentUser() }}</h3>
         }
 
     </div>

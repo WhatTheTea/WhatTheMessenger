@@ -1,3 +1,10 @@
 <div class="root">
-    Login
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <label for="name">Name: </label>
+        <input id="name" type="text" formControlName="username" />
+        <label for="name">Password: </label>
+        <input id="name" type="password" formControlName="password" />
+
+        <button type="submit">Login</button>
+    </form>
 </div>
