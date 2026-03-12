@@ -23,8 +23,8 @@ builder.Services.AddResponseCompression(opts =>
 });
 
 builder.ConfigureDataAccess();
-builder.ConfigureIdentity();
-builder.ConfigureCookieAuth();
+builder.ConfigureIdentityAuth();
+builder.ConfigureBlazorAuth();
 
 builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationService>();
 builder.Services.AddScoped<IChatService, ChatService>();
@@ -45,6 +45,9 @@ if (builder.Configuration.GetValue<bool>("single-process"))
         return clientHubConnection;
     });
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,9 +65,6 @@ else
 }
 app.UseHttpsRedirection();
 
-app.UseAntiforgery();
-
-app.MapJwtAuthEndpoints();
 if (app.Configuration.GetValue<bool>("single-process"))
 {
     app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
@@ -72,10 +72,19 @@ if (app.Configuration.GetValue<bool>("single-process"))
     app.MapRazorComponents<App>()
         .AddInteractiveServerRenderMode();
 }
+app.UseAntiforgery();
+
+app.MapAuthEndpoints();
 
 if (app.Environment.IsProduction())
 {
     app.UseResponseCompression();
+}
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.MapHub<ChatHub>("/hubs/chat");
