@@ -8,31 +8,38 @@ namespace WhatTheMessenger.Server;
 
 public static partial class Configuration
 {
-    public static WebApplicationBuilder ConfigureAuth(this WebApplicationBuilder builder)
+    extension(WebApplicationBuilder builder)
     {
-        builder.Services.AddCascadingAuthenticationState();
+        public WebApplicationBuilder ConfigureIdentity()
+        {
+            builder.Services.AddIdentityCore<User>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
+                    options.Password.RequireNonAlphanumeric = false;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddSignInManager()
+                .AddDefaultTokenProviders();
 
-        builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            })
-            .AddIdentityCookies();
-        builder.Services.AddHttpContextAccessor();
+            return builder;
+        }
 
+        public WebApplicationBuilder ConfigureCookieAuth()
+        {
+            builder.Services.AddCascadingAuthenticationState();
 
-        builder.Services.AddIdentityCore<User>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.Stores.SchemaVersion = IdentitySchemaVersions.Version3;
-                options.Password.RequireNonAlphanumeric = false;
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddSignInManager()
-            .AddDefaultTokenProviders();
+            builder.Services.AddAuthentication(options =>
+                {
+                    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+                })
+                .AddIdentityCookies();
+            builder.Services.AddHttpContextAccessor();
 
-        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
-        return builder;
+            return builder;
+        }
     }
 }
