@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../core/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -8,6 +10,9 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
   styleUrl: './register.scss',
 })
 export class Register {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   registerForm = new FormGroup(
     {
       displayName: new FormControl('', [Validators.required, Validators.maxLength(30)]),
@@ -24,5 +29,19 @@ export class Register {
     ],
   );
 
-  register() {}
+  register() {
+    if (this.registerForm.invalid) return;
+
+    const form = this.registerForm.value;
+
+    this.authService
+      .register({
+        login: form.username ?? '',
+        nickname: form.displayName ?? '',
+        password: form.password ?? '',
+      })
+      .subscribe(() => {
+        this.router.navigate([''], { queryParams: { register: null } });
+      });
+  }
 }

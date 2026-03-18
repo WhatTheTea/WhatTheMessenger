@@ -20,7 +20,7 @@ export class Login {
   });
 
   login() {
-    var data = this.loginForm.value
+    const data = this.loginForm.value
 
     if (this.loginForm.valid) {
       this.authService.login({

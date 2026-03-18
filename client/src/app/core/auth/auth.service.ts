@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, Injectable, signal } from '@angular/core';
 import { concatMap, map, Observable, tap } from 'rxjs';
-import { LoginDTO } from '../models';
+import { LoginDTO, RegisterDTO } from '../models';
 
 type guid = string;
 
@@ -16,12 +16,12 @@ export class AuthService {
   login(dto: LoginDTO): Observable<void> {
     return this.http
       .post<void>('/api/auth/login', dto, { withCredentials: true })
-      .pipe(concatMap(() => this.fetchCurrentUser().pipe(map((_) => {}))));
+      .pipe(concatMap(() => this.fetchCurrentUser().pipe(map(() => {}))));
   }
 
   logout(): Observable<void> {
     return this.http
-      .post<void>('/api/auth/logout', {}, { withCredentials: true })
+      .post<void>('/api/auth/logout', null, { withCredentials: true })
       .pipe(tap((_) => this._currentUser.set(null)));
   }
 
@@ -31,5 +31,11 @@ export class AuthService {
         withCredentials: true,
       })
       .pipe(tap((user) => this._currentUser.set(user)));
+  }
+
+  register(dto: RegisterDTO): Observable<void> {
+    return this.http
+      .post<void>('/api/auth/register', dto)
+      .pipe(concatMap(() => this.fetchCurrentUser().pipe(map(() => {}))));
   }
 }
