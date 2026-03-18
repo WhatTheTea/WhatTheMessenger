@@ -10,9 +10,6 @@
 
   <!-- Nav -->
   <nav class="sidebar__nav">
-
-
-
     <!-- <a href="#" class="nav-item">
       <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -41,6 +38,26 @@
       </svg>
       <span class="nav-item__label">Help</span>
     </a> -->
+    <a class="nav-item">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-mail-plus-icon lucide-mail-plus"
+      >
+        <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8" />
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+        <path d="M19 16v6" />
+        <path d="M16 19h6" />
+      </svg>
+      <span class="nav-item__label">New chat</span>
+    </a>
   </nav>
 
   <!-- Footer -->
@@ -62,7 +79,11 @@
 
 <!-- MAIN -->
 <main class="main-content">
-  <!-- page content goes here -->
+  @if (chatId()) {
+    <app-chat [chatId]="chatId() ?? ''" />
+  } @else {
+    <h2>No chat selected</h2>
+  }
 </main>
 
 <script>
