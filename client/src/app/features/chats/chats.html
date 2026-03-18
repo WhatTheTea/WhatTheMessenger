@@ -1,1 +1,76 @@
-<p>chats works!</p>
+<aside class="sidebar">
+  <!-- Logo -->
+  <div class="sidebar__logo">
+    <!-- <div class="sidebar__logo-mark">NB</div> -->
+    <div>
+      <div class="sidebar__logo-name">WhatTheMessenger</div>
+      <div class="sidebar__logo-sub">CHATS</div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="sidebar__nav">
+
+
+
+    <!-- <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+      <span class="nav-item__label">Messages</span>
+      <span class="tag tag--blue">5</span>
+    </a> -->
+
+    <!-- <p class="sidebar__section-label">System</p>
+
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3" />
+        <path
+          d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"
+        />
+      </svg>
+      <span class="nav-item__label">Settings</span>
+    </a>
+
+    <a href="#" class="nav-item">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 8v4" />
+        <path d="M12 16h.01" />
+      </svg>
+      <span class="nav-item__label">Help</span>
+    </a> -->
+  </nav>
+
+  <!-- Footer -->
+  <div class="sidebar__footer">
+    <div class="sidebar__avatar">U</div>
+    <div class="sidebar__user-info">
+      <div class="sidebar__user-name">User</div>
+      <!-- <div class="sidebar__user-role">Administrator</div> -->
+    </div>
+    <button class="sidebar__logout" aria-label="Log out" (click)="logout()">
+      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+        <polyline points="16 17 21 12 16 7" />
+        <line x1="21" y1="12" x2="9" y2="12" />
+      </svg>
+    </button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main-content">
+  <!-- page content goes here -->
+</main>
+
+<script>
+  document.querySelectorAll('.nav-item').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.nav-item').forEach((i) => i.classList.remove('active'));
+      el.classList.add('active');
+    });
+  });
+</script>

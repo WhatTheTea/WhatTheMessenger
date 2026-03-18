@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthService } from '../../core/auth';
@@ -13,7 +13,7 @@ import { map } from 'rxjs';
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
-export class Home implements OnInit {
+export class Home {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   authService = inject(AuthService);
@@ -22,9 +22,11 @@ export class Home implements OnInit {
     initialValue: false,
   });
 
-  ngOnInit(): void {
-    if (this.authService.isAuthenticated()) {
-      this.router.navigateByUrl("chats");
-    }
+  constructor() {
+    effect(() => {
+      if (this.authService.isAuthenticated()) {
+        this.router.navigateByUrl('chats');
+      }
+    });
   }
 }
