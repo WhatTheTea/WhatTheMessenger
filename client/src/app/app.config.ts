@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { AuthService } from './core/auth';
-import { catchError, of } from 'rxjs';
+import { catchError, of, tap,  } from 'rxjs';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -11,7 +11,10 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAppInitializer(() => {
       const auth = inject(AuthService);
-      return auth.fetchCurrentUser().pipe(catchError(() => of(null)));
+      return auth.fetchCurrentUser().pipe(catchError(err => {
+        console.debug(err);
+        return of(null);
+      }));
     })
   ]
 };

@@ -1,10 +1,20 @@
-<div class="root">
-    <form [formGroup]="loginForm" (ngSubmit)="login()">
-        <label for="name">Name: </label>
-        <input id="name" type="text" formControlName="username" />
-        <label for="name">Password: </label>
-        <input id="name" type="password" formControlName="password" />
+<div>
+    <form class="nb-form-group nb-text-left m-4" [formGroup]="loginForm" (ngSubmit)="login()">
+        <div class="mb-2">
+            <label for="name">
+                <span class="text-xl">Username:</span> 
+            </label>
+            <input class="nb-input default" id="name" type="text" formControlName="username" />
+            
+            <label for="pass">
+                <span class="text-xl">Password: </span> 
+            </label>
+            <input class="nb-input default" id="pass" type="password" formControlName="password" />
+        </div>
 
-        <button type="submit">Login</button>
+        <div class="flex gap-1">
+            <button class="nb-button blue">Register</button>
+            <button class="nb-button orange" type="submit">Login</button>
+        </div>
     </form>
 </div>

@@ -30,7 +30,9 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "node_modules/neobrutalismcss/dist/index.min.css",
+              "src/tailwind.css"
             ]
           },
           "configurations": {

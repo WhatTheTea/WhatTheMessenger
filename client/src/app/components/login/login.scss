@@ -1,5 +1,10 @@
-.root {
-    background-color: white;
-    padding: 8px;
-    border-radius: 8px;
+.nb-input {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.nb-button {
+    flex: 1 !important;
+    min-width: 0 !important;
+    width: auto !important;
 }
