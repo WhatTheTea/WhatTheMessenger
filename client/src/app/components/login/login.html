@@ -1,7 +1,7 @@
 <div>
     <form class="nb-form-group nb-text-left m-4" [formGroup]="loginForm" (ngSubmit)="login()">
         <div class="mb-2">
-            <label for="name">
+            <label for="username">
                 <span class="text-xl">Username:</span> 
             </label>
             <input class="nb-input default" id="name" type="text" formControlName="username" />
@@ -13,7 +13,7 @@
         </div>
 
         <div class="flex gap-1">
-            <button class="nb-button blue">Register</button>
+            <button class="nb-button blue" (click)="register()">Register</button>
             <button class="nb-button orange" type="submit">Login</button>
         </div>
     </form>

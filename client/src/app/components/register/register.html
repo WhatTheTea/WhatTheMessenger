@@ -1,1 +1,29 @@
-<p>register works!</p>
+<div>
+    <form class="nb-form-group nb-text-left m-4" [formGroup]="registerForm" (ngSubmit)="register()">
+        <div class="mb-2">
+            <label for="name">
+                <span class="text-xl">Display name:</span> 
+            </label>
+            <input class="nb-input default" id="name" type="text" formControlName="displayName" />
+
+            <label for="username">
+                <span class="text-xl">Username:</span> 
+            </label>
+            <input class="nb-input default" id="username" type="text" formControlName="username" />
+            
+            <label for="pass">
+                <span class="text-xl">Password: </span> 
+            </label>
+            <input class="nb-input default" id="pass" type="password" formControlName="password" />
+
+             <label for="confirm-pass">
+                <span class="text-xl">Confirm password: </span> 
+            </label>
+            <input class="nb-input default" id="confirm-pass" type="password" formControlName="confirmPassword" />
+        </div>
+
+        <div class="flex">
+            <button class="nb-button orange" type="submit" [disabled]="registerForm.invalid">Register</button>
+        </div>
+    </form>
+</div>

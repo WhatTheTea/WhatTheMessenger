@@ -1,15 +1,21 @@
 
 <main class="flex-center">    
     <div class="main-card">
-        <h1 class="app-title">WhatTheMessenger</h1>
+        <h1 class="app-title"><a href="/">WhatTheMessenger</a></h1>
 
         @if (!authService.isAuthenticated()) 
         {
-            <app-login style="margin-left: auto; margin-right: auto; text-align: center;" />
+            @if (isRegister()) 
+            {
+                <app-register class="auth" />
+            }
+            @else 
+            {
+                <app-login class="auth" />
+            }
         } 
         @else {
             <h3>Hello {{ authService.currentUser() }}</h3>
         }
-
     </div>
 </main>

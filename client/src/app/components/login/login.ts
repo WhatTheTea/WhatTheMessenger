@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../core/auth';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -11,6 +12,7 @@ import { AuthService } from '../../core/auth';
 
 export class Login {
   private authService = inject(AuthService)
+  private router = inject(Router);
 
   loginForm = new FormGroup({
     username: new FormControl(''),
@@ -27,5 +29,9 @@ export class Login {
           rememberMe: true
         }).subscribe();
     }
+  }
+
+  register() {
+    this.router.navigate([''], { queryParams: { register: true } });
   }
 }
