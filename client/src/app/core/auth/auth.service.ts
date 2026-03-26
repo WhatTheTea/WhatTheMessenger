@@ -1,41 +1,16 @@
-import { HttpClient } from '@angular/common/http';
-import { computed, Injectable, signal } from '@angular/core';
-import { concatMap, map, Observable, tap } from 'rxjs';
+import { computed, Injectable, Signal } from '@angular/core';
+import { Observable } from 'rxjs';
 import { LoginDTO, RegisterDTO } from '../models';
 
-type guid = string;
+export type guid = string;
 
-@Injectable({ providedIn: 'root' })
-export class AuthService {
-  private _currentUser = signal<guid | null>(null);
-  currentUser = this._currentUser.asReadonly();
-  isAuthenticated = computed(() => this.currentUser() !== null);
+@Injectable()
+export abstract class AuthService {
+  public abstract currentUser : Signal<guid | null>
+  public isAuthenticated = computed(() => this.currentUser() !== null);
 
-  constructor(private http: HttpClient) {}
-
-  login(dto: LoginDTO): Observable<void> {
-    return this.http
-      .post<void>('/api/auth/login', dto, { withCredentials: true })
-      .pipe(concatMap(() => this.fetchCurrentUser().pipe(map(() => {}))));
-  }
-
-  logout(): Observable<void> {
-    return this.http
-      .post<void>('/api/auth/logout', null, { withCredentials: true })
-      .pipe(tap((_) => this._currentUser.set(null)));
-  }
-
-  fetchCurrentUser(): Observable<guid> {
-    return this.http
-      .get<guid>('/api/auth/me', {
-        withCredentials: true,
-      })
-      .pipe(tap((user) => this._currentUser.set(user)));
-  }
-
-  register(dto: RegisterDTO): Observable<void> {
-    return this.http
-      .post<void>('/api/auth/register', dto)
-      .pipe(concatMap(() => this.fetchCurrentUser().pipe(map(() => {}))));
-  }
+  public abstract login(dto: LoginDTO): Observable<void>;
+  public abstract logout(): Observable<void>;
+  public abstract fetchCurrentUser(): Observable<guid | null>;
+  public abstract register(dto: RegisterDTO): Observable<void>;
 }
