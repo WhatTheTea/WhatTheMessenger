@@ -3,6 +3,7 @@ import { Injectable, signal } from '@angular/core';
 import { concatMap, map, Observable, tap } from 'rxjs';
 import { LoginDTO, RegisterDTO } from '../models';
 import { AuthService, guid } from './auth.service';
+import { environment } from '../../../environments';
 
 @Injectable()
 export class CookieAuthService extends AuthService {
@@ -15,19 +16,19 @@ export class CookieAuthService extends AuthService {
 
   login(dto: LoginDTO): Observable<void> {
     return this.http
-      .post<void>('/api/auth/login', dto, { withCredentials: true })
+      .post<void>(`${environment.authApi}/login`, dto, { withCredentials: true })
       .pipe(concatMap(() => this.fetchCurrentUser().pipe(map(() => {}))));
   }
 
   logout(): Observable<void> {
     return this.http
-      .post<void>('/api/auth/logout', null, { withCredentials: true })
+      .post<void>(`${environment.authApi}/logout`, null, { withCredentials: true })
       .pipe(tap((_) => this._currentUser.set(null)));
   }
 
   fetchCurrentUser(): Observable<guid> {
     return this.http
-      .get<guid>('/api/auth/me', {
+      .get<guid>(`${environment.authApi}/me`, {
         withCredentials: true,
       })
       .pipe(tap((user) => this._currentUser.set(user)));
@@ -35,7 +36,7 @@ export class CookieAuthService extends AuthService {
 
   register(dto: RegisterDTO): Observable<void> {
     return this.http
-      .post<void>('/api/auth/register', dto)
+      .post<void>(`${environment.authApi}/register`, dto)
       .pipe(concatMap(() => this.fetchCurrentUser().pipe(map(() => {}))));
   }
 }

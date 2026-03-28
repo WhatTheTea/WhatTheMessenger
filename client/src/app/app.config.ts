@@ -10,14 +10,21 @@ import { catchError, of } from 'rxjs';
 import { routes } from './app.routes';
 import { AuthService, CookieAuthService, MockAuthService } from './core/auth';
 import { environment } from '../environments';
+import { MockRealtimeService, RealTimeService, SignalRService } from './core/realtime';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
+    
     environment.useMocks
       ? { provide: AuthService, useClass: MockAuthService }
       : { provide: AuthService, useClass: CookieAuthService },
+    
+    environment.useMocks
+      ? { provide: RealTimeService, useClass: MockRealtimeService}
+      : { provide: RealTimeService, useClass: SignalRService },
+
     provideAppInitializer(() => {
       const auth = inject(AuthService);
       return auth.fetchCurrentUser().pipe(
