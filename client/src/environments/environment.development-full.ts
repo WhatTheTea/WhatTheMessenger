@@ -1,6 +1,9 @@
-import { Environment } from "./environment.model";
+import { AppConfig } from "./environment.model";
 
-export const environment : Environment = {
+export const environment : AppConfig = {
     kind : "development",
-    useMocks : false
+    useMocks : false,
+    authApi : "/api/auth",
+    chatApi : "/api/chats",
+    signalR : "/hubs/chat"
 };
