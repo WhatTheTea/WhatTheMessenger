@@ -1,12 +1,11 @@
 import { computed, Injectable, Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LoginDTO, RegisterDTO } from '../models';
-
-export type guid = string;
+import { guid } from '../../primitives';
 
 @Injectable()
 export abstract class AuthService {
-  public abstract currentUser : Signal<guid | null>
+  public abstract currentUser: Signal<guid | null>;
   public isAuthenticated = computed(() => this.currentUser() !== null);
 
   public abstract login(dto: LoginDTO): Observable<void>;

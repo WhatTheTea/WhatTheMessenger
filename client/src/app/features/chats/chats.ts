@@ -14,7 +14,7 @@ export class Chats {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  chatId = signal<string | null>(null)
+  chatId = signal<string | null>(null);
 
   constructor() {
     effect(() => {

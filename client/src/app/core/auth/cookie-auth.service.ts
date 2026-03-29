@@ -2,8 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { concatMap, map, Observable, tap } from 'rxjs';
 import { LoginDTO, RegisterDTO } from '../models';
-import { AuthService, guid } from './auth.service';
+import { AuthService } from './auth.service';
 import { environment } from '../../../environments';
+import { guid } from '../../primitives';
 
 @Injectable()
 export class CookieAuthService extends AuthService {

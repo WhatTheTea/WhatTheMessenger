@@ -1,5 +1,5 @@
 export interface LoginDTO {
-    login : string
-    password : string
-    rememberMe : boolean
+  login: string;
+  password: string;
+  rememberMe: boolean;
 }

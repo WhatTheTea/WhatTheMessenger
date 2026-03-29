@@ -15,11 +15,10 @@ export class MockAuthService extends AuthService {
   private _users: Map<guid, _User> = new Map<guid, _User>();
   currentUser = signal<guid | null>(null);
 
-  login(dto: LoginDTO): Observable<void> 
-  {
-    let user = this._users.get(dto.login)
+  login(dto: LoginDTO): Observable<void> {
+    let user = this._users.get(dto.login);
     if (user?.password === dto.password) {
-        this.currentUser.set(user.id);
+      this.currentUser.set(user.id);
     }
 
     return of(void 0);
@@ -36,7 +35,7 @@ export class MockAuthService extends AuthService {
   }
 
   register(dto: RegisterDTO): Observable<void> {
-    let user : _User = {
+    let user: _User = {
       id: dto.login,
       name: dto.login,
       nickname: dto.nickname,

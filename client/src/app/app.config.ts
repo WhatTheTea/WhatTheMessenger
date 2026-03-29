@@ -9,7 +9,7 @@ import { provideRouter } from '@angular/router';
 import { catchError, of } from 'rxjs';
 
 import { AuthService, CookieAuthService, MockAuthService } from './core/auth';
-import { MockRealtimeService, RealTimeService, SignalRService } from './core/realtime';
+import { MockRealtimeService, RealTimeService, SignalRService } from './core';
 import { routes } from './app.routes';
 import { environment } from '../environments';
 

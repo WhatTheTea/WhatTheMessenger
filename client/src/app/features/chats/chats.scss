@@ -1,15 +1,15 @@
 // ─── Tokens ───────────────────────────────────────────────────────────────────
-$accent:      #D64B2B;
-$bg-dark:     #111;
-$bg-body:     #f5f0e8;
-$border:      #000;
-$text-muted:  #9ca3af;   // gray-400
-$text-dim:    #6b7280;   // gray-500
+$accent: #d64b2b;
+$bg-dark: #111;
+$bg-body: #f5f0e8;
+$border: #000;
+$text-muted: #9ca3af; // gray-400
+$text-dim: #6b7280; // gray-500
 
-$font-mono:   'Space Mono', monospace;
-$font-display:'Unbounded', sans-serif;
+$font-mono: 'Space Mono', monospace;
+$font-display: 'Unbounded', sans-serif;
 
-$sidebar-w:   15rem;     // w-60
+$sidebar-w: 15rem; // w-60
 
 // ─── Shadow helpers ───────────────────────────────────────────────────────────
 @mixin nb-shadow($x: 4px, $y: 4px) {
@@ -17,7 +17,11 @@ $sidebar-w:   15rem;     // w-60
 }
 
 // ─── Reset / base ─────────────────────────────────────────────────────────────
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 body {
   font-family: $font-mono;
@@ -39,9 +43,15 @@ body {
   z-index: 50;
 
   // scrollbar
-  ::-webkit-scrollbar       { width: 4px; }
-  ::-webkit-scrollbar-track { background: #1a1a1a; }
-  ::-webkit-scrollbar-thumb { background: $accent; }
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: $accent;
+  }
 
   // ── Logo ────────────────────────────────────────────────────────────────────
   &__logo {
@@ -104,7 +114,9 @@ body {
     color: $text-dim;
     padding: 0 0.5rem 0.5rem;
 
-    & + & { padding-top: 1rem; } // gap between sections via adjacent sibling
+    & + & {
+      padding-top: 1rem;
+    } // gap between sections via adjacent sibling
   }
 
   // spacing between section label and the first item after it is handled
@@ -163,7 +175,7 @@ body {
   &__logout {
     width: 1.75rem;
     height: 1.75rem;
-    border: 2px solid #4b5563;   // gray-600
+    border: 2px solid #4b5563; // gray-600
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,9 +183,14 @@ body {
     flex-shrink: 0;
     background: transparent;
     cursor: pointer;
-    transition: border-color 0.15s, color 0.15s;
+    transition:
+      border-color 0.15s,
+      color 0.15s;
 
-    svg { width: 0.875rem; height: 0.875rem; }
+    svg {
+      width: 0.875rem;
+      height: 0.875rem;
+    }
 
     &:hover {
       border-color: $accent;
@@ -193,10 +210,10 @@ body {
   text-decoration: none;
   cursor: pointer;
   transition:
-    background      0.1s,
-    border-color    0.1s,
-    box-shadow      0.1s,
-    transform       0.1s;
+    background 0.1s,
+    border-color 0.1s,
+    box-shadow 0.1s,
+    transform 0.1s;
 
   svg {
     width: 1rem;
@@ -226,7 +243,9 @@ body {
     @include nb-shadow(4px, 4px);
     transform: translate(-2px, -2px);
 
-    svg { stroke: $border; }
+    svg {
+      stroke: $border;
+    }
   }
 }
 
@@ -241,9 +260,18 @@ body {
   border: 2px solid $border;
   @include nb-shadow(2px, 2px);
 
-  &--red   { background: #ff5733; color: #fff; }
-  &--green { background: #06d6a0; color: $border; }
-  &--blue  { background: #4cc9f0; color: $border; }
+  &--red {
+    background: #ff5733;
+    color: #fff;
+  }
+  &--green {
+    background: #06d6a0;
+    color: $border;
+  }
+  &--blue {
+    background: #4cc9f0;
+    color: $border;
+  }
 }
 
 // ─── Main content ─────────────────────────────────────────────────────────────
