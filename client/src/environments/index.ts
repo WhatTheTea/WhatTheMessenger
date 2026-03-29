@@ -1,1 +1,1 @@
-export { config as environment } from "./environment"
+export { environment } from "./environment"

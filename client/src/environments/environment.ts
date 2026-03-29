@@ -1,6 +1,6 @@
 import { AppConfig } from "./environment.model";
 
-export const config : AppConfig = {
+export const environment : AppConfig = {
     kind : "production",
     useMocks : false,
     authApi : "/api/auth",

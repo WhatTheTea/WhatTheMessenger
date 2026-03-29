@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HubConnectionBuilder } from '@microsoft/signalr';
-import { environment } from '../../../environments';
+import { environment } from '../../environments';
 
 @Injectable()
 export abstract class RealTimeService {
