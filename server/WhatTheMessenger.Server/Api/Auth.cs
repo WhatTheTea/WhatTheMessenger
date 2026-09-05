@@ -17,7 +17,7 @@ public static class Auth
                 {
                     var user = await userManager.GetUserAsync(principal);
                     return user is not null 
-                        ? Results.Ok(user.Id) 
+                        ? Results.Ok(user) 
                         : Results.Unauthorized();
                 })
                 .RequireAuthorization()

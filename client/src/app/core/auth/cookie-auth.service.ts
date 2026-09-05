@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { concatMap, map, Observable, tap } from 'rxjs';
-import { LoginDTO, RegisterDTO } from '../models';
+import { LoginDTO, RegisterDTO, User } from '../models';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments';
 import { guid } from '../../primitives';
@@ -29,9 +29,10 @@ export class CookieAuthService extends AuthService {
 
   fetchCurrentUser(): Observable<guid> {
     return this.http
-      .get<guid>(`${environment.authApi}/me`, {
+      .get<User>(`${environment.authApi}/me`, {
         withCredentials: true,
       })
+      .pipe(map((user) => user.id))
       .pipe(tap((user) => this._currentUser.set(user)));
   }
 

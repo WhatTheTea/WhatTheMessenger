@@ -1,7 +1,8 @@
 import { Observable, of } from 'rxjs';
 import { LoginDTO, RegisterDTO } from '../models';
-import { AuthService, guid } from './auth.service';
+import { AuthService} from './auth.service';
 import { Injectable, signal } from '@angular/core';
+import { guid } from '../../primitives';
 
 interface _User {
   id: guid;

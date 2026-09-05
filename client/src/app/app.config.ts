@@ -9,7 +9,7 @@ import { provideRouter } from '@angular/router';
 import { catchError, of } from 'rxjs';
 
 import { AuthService, CookieAuthService, MockAuthService } from './core/auth';
-import { MockRealtimeService, RealTimeService, SignalRService } from './core';
+import { DatabaseUserService, MockRealtimeService, MockUserService, RealTimeService, SignalRService, UserService } from './core';
 import { routes } from './app.routes';
 import { environment } from '../environments';
 
@@ -18,11 +18,13 @@ function provideServices(): Provider[] {
     return [
       { provide: AuthService, useClass: MockAuthService },
       { provide: RealTimeService, useClass: MockRealtimeService },
+      { provide: UserService, useClass: MockUserService },
     ];
   } else {
     return [
       { provide: AuthService, useClass: CookieAuthService },
       { provide: RealTimeService, useClass: SignalRService },
+      { provide: UserService, useClass: DatabaseUserService },  
     ];
   }
 }

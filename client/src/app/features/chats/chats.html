@@ -62,9 +62,9 @@
 
   <!-- Footer -->
   <div class="sidebar__footer">
-    <div class="sidebar__avatar">U</div>
+    <div class="sidebar__avatar">{{ userDisplayName()?.charAt(0)?.toUpperCase() }}</div>
     <div class="sidebar__user-info">
-      <div class="sidebar__user-name">User</div>
+      <div class="sidebar__user-name">{{ userDisplayName() }}</div>
       <!-- <div class="sidebar__user-role">Administrator</div> -->
     </div>
     <button class="sidebar__logout" aria-label="Log out" (click)="logout()">

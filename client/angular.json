@@ -84,6 +84,9 @@
             },
             "development": {
               "buildTarget": "client:build:development"
+            },
+            "development-full": {
+              "buildTarget": "client:build:development-full"
             }
           },
           "options": {

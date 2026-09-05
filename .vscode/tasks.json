@@ -8,7 +8,7 @@
 		},
 		{
 			"type": "shell",
-			"command": "dotnet watch --project WhatTheMessenger.Server -lp 'dev (single-process)'",
+			"command": "cd server && dotnet watch --project WhatTheMessenger.Server -lp 'dev (single-process)'",
 			"isBackground": true,
 			"problemMatcher": "$msCompile",
 			"label": "dotnet: watch (single-process)"
