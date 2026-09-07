@@ -8,9 +8,10 @@ import { environment } from '../../environments';
 @Injectable()
 export abstract class ChatService {
   abstract createChat(chat: CreateChat): Observable<void>;
-  abstract getChat(chatId: string): Observable<Chat>;
+  abstract getChatsForUser(chatId: string): Observable<Chat[]>;
 }
 
+@Injectable()
 export class DatabaseChatService extends ChatService {
   constructor(private http: HttpClient) {
     super();
@@ -20,7 +21,7 @@ export class DatabaseChatService extends ChatService {
     return this.http.post<void>(environment.chatApi + '/create', chat, { withCredentials: true });
   }
 
-  override getChat(chatId: string): Observable<Chat> {
-    throw new Error('Method not implemented.');
+  override getChatsForUser(userId: string): Observable<Chat[]> {
+    return this.http.get<Chat[]>(environment.chatApi + '/user/' + userId, { withCredentials: true });
   }
 }

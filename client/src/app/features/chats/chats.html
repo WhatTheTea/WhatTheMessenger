@@ -11,7 +11,7 @@
   <!-- Nav -->
   <nav class="sidebar__nav">
 
-    @for (chat of userChats(); track chat.chatId()) {
+    @for (chat of userChats(); track chat.id) {
       <app-chat-nav-item  />
     }
 
