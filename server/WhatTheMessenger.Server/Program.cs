@@ -80,6 +80,7 @@ if (app.Configuration.GetValue<bool>("single-process"))
 app.UseAntiforgery();
 
 app.MapAuthEndpoints();
+app.MapChatEndpoints();
 
 if (app.Environment.IsProduction())
 {
