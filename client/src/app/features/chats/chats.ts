@@ -18,6 +18,7 @@ export class Chats {
 
   chatId = signal<string | null>(null);
   userDisplayName = signal<string | null>(null);
+  userChats = signal<Chat[]>([]);
 
   constructor() {
     effect(() => {
