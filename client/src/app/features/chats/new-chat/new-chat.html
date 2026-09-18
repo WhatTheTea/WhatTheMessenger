@@ -1,11 +1,13 @@
 <form class="nb-form-group nb-text-left m-4" [formGroup]="newChatForm" (ngSubmit)="onFormSubmit()">
-  <div class="field-group">
-    <label for="username">
-      <span class="text-xl">Username:</span>
+  <div class="field-group mb-2">
+    <label for="name" class="search-label">
+      <span class="text-xl">Name:</span>
     </label>
-    <input class="nb-input default" id="name" type="text" formControlName="username" />
+    <input class="nb-input default" id="chatName" type="text" formControlName="name" autocomplete="off" />
 
-    <label for="user-search" class="search-label">Search People</label>
+    <label for="user-search" class="search-label">
+        <span class="text-xl">People:</span> 
+    </label>
     <input
       id="user-search"
       type="text"
@@ -24,8 +26,7 @@
     @for (user of searchResults(); track user.id) {
       <div class="user-card" [class.selected]="isSelected(user)" (click)="toggleSelectUser(user)">
         <div class="user-info">
-          <span class="display-name">{{ user.displayName }}</span>
-          <span class="username">&#64;{{ user.username }}</span>
+          <span class="display-name">{{ user.displayName }}</span><span class="username">&#64;{{ user.username }}</span>
         </div>
         <button type="button" class="select-btn">
           {{ isSelected(user) ? '✓' : '+' }}
@@ -37,4 +38,8 @@
       }
     }
   </div>
+
+  <div class="flex gap-1">
+      <button class="nb-button orange" type="submit">Create new chat</button>
+    </div>
 </form>

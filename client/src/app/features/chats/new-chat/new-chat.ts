@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { User } from '../../../core/models';
-import { UserService } from '../../../core';
+import { ChatService, UserService } from '../../../core';
 import { debounceTime, distinctUntilChanged, filter, forkJoin, of, switchMap, tap } from 'rxjs';
+import { guid } from '../../../primitives';
 
 @Component({
   selector: 'app-new-chat',
@@ -12,9 +13,14 @@ import { debounceTime, distinctUntilChanged, filter, forkJoin, of, switchMap, ta
 })
 export class NewChat implements OnInit {
   private userService = inject(UserService);
+  private chatService = inject(ChatService);
+  
+  creatorId = input.required<guid>();
+  created = output();
 
   // Group containing form controls
   newChatForm = new FormGroup({
+    name: new FormControl('', {nonNullable: true}),
     query: new FormControl('', { nonNullable: true }),
   });
 
@@ -63,7 +69,16 @@ export class NewChat implements OnInit {
   }
 
   onFormSubmit(): void {
-    // Prevents page reload when Enter key is pressed in search input
+    const data = this.newChatForm.value;
+    if (this.newChatForm.valid) {
+      this.chatService.createChat(
+        {
+          name: data.name ?? '',
+          participants: [...this.selectedUsers().map(x => x.id as guid), this.creatorId()]
+        }
+      )
+      .subscribe(_ => this.created.emit());
+    }
   }
 
   toggleSelectUser(user: User): void {

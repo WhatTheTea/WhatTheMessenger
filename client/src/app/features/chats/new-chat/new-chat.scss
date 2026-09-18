@@ -1,0 +1,118 @@
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.search-label {
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.neo-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 3px solid #000;
+  background-color: #fff;
+  font-family: inherit;
+  font-weight: 600;
+  box-shadow: 4px 4px 0px #000;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    box-shadow: 6px 6px 0px #000;
+    background-color: #fffde7;
+  }
+}
+
+.status-msg {
+  font-weight: 700;
+  padding: 0.5rem 0;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 0.25rem; /* Room for hard box-shadows */
+}
+
+/* User Card Component */
+.user-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border: 3px solid #000;
+  background-color: #ffffff;
+  cursor: pointer;
+  box-shadow: 3px 3px 0px #000;
+  user-select: none;
+  transition: transform 0.05s ease, box-shadow 0.05s ease;
+
+  &:hover {
+    background-color: #feefc3; /* Soft yellow highlight */
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #000;
+  }
+
+  &:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px #000;
+  }
+
+  &.selected {
+    background-color: #a3e635; /* Neobrutalist lime green */
+
+    .select-btn {
+      background-color: #000;
+      color: #fff;
+    }
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+
+    .display-name {
+      font-weight: 800;
+      font-size: 1rem;
+      color: #000;
+    }
+
+    .username {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+
+  .select-btn {
+    border: 2px solid #000;
+    background: #fff;
+    font-weight: 900;
+    font-size: 0.9rem;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 0px #000;
+    cursor: pointer;
+    pointer-events: none; /* Let the parent user-card handle click events */
+  }
+}

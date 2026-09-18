@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 import { User } from './models';
 import { guid } from '../primitives';
 import { environment } from '../../environments';
@@ -30,7 +30,7 @@ export class MockUserService extends UserService {
       observer.complete();
     });
   }
-  
+
   override findUsers(query: string): Observable<guid[]> {
     return of(
       Array.from(this.users.values())
@@ -47,12 +47,15 @@ export class DatabaseUserService extends UserService {
   }
 
   override fetchUserInfo(userId: guid): Observable<User> {
-    throw new Error('Method not implemented.');
-    return this.http.get<User>(`${environment.authApi}/me`, {
+    return this.http.get<User>(`${environment.userApi}/${userId}`, {
       withCredentials: true,
     });
   }
   override findUsers(query: string): Observable<guid[]> {
-    throw new Error('Method not implemented.');
+    return this.http
+      .get<guid[]>(`${environment.userApi}/search/${query}`, {
+        withCredentials: true,
+      })
+      .pipe(map((x) => x ?? []));
   }
 }

@@ -90,7 +90,7 @@
     <h2>No chat selected</h2>
   }
   <app-nb-dialog #newChatDialog title="New chat">
-      <app-new-chat></app-new-chat>
+      <app-new-chat [creatorId]="userId()" (created)="newChatDialog.close()"></app-new-chat>
   </app-nb-dialog>
 </main>
 

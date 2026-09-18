@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, viewChild } from '@angular/core';
 import { AuthService } from '../../core/auth';
 import { Router } from '@angular/router';
 import { ChatNavItem } from './chat-nav-item/chat-nav-item';
@@ -7,6 +7,7 @@ import { Chat } from '../../core/models/chat';
 import { Chat as ChatComponent } from './chat/chat';
 import { NbDialog } from '../../components/nb-dialog/nb-dialog';
 import { NewChat } from './new-chat/new-chat';
+import { guid } from '../../primitives';
 
 @Component({
   selector: 'app-chats',
@@ -20,6 +21,7 @@ export class ChatList {
   private userService = inject(UserService);
   private chatService = inject(ChatService);
 
+  userId = signal<guid>(this.authService.currentUser() ?? '');
   chatId = signal<string | null>(null);
   userDisplayName = signal<string | null>(null);
   userChats = signal<Chat[]>([]);
@@ -37,7 +39,7 @@ export class ChatList {
 
     this.chatService.getChatsForUser(this.authService.currentUser() ?? '').subscribe((chats) => {
       this.userChats.set(chats);
-    })
+    });
   }
 
   logout() {

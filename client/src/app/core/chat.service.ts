@@ -25,7 +25,7 @@ export class MockChatService extends ChatService {
   override createChat(chat: CreateChat): Observable<void> {
     const chatId: guid = this.chats.size.toString();
 
-    const users$ = chat.participantIds.map((x) => this.userService.fetchUserInfo(x));
+    const users$ = chat.participants.map((x) => this.userService.fetchUserInfo(x));
 
     return forkJoin(users$).pipe(
       map((users) => {
