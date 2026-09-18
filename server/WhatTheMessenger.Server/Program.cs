@@ -81,6 +81,7 @@ app.UseAntiforgery();
 
 app.MapAuthEndpoints();
 app.MapChatEndpoints();
+app.MapUserEndpoints();
 
 if (app.Environment.IsProduction())
 {
