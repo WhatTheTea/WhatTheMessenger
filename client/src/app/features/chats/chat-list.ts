@@ -1,7 +1,6 @@
-import { Component, effect, inject, signal, viewChild } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { AuthService } from '../../core/auth';
 import { Router } from '@angular/router';
-import { ChatNavItem } from './chat-nav-item/chat-nav-item';
 import { ChatService, UserService } from '../../core';
 import { Chat } from '../../core/models/chat';
 import { Chat as ChatComponent } from './chat/chat';
@@ -11,7 +10,7 @@ import { guid } from '../../primitives';
 
 @Component({
   selector: 'app-chats',
-  imports: [ChatComponent, ChatNavItem, NbDialog, NewChat],
+  imports: [ChatComponent, NbDialog, NewChat],
   templateUrl: './chat-list.html',
   styleUrl: './chat-list.scss',
 })

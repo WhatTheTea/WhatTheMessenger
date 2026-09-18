@@ -12,16 +12,15 @@
   <nav class="sidebar__nav">
 
     @for (chat of userChats(); track chat.id) {
-      <app-chat-nav-item  />
+      <a class="nav-item">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        <span class="nav-item__label">{{ chat.name }}</span>
+        <!-- <span class="tag tag--blue">5</span> could be used for unread indicator -->
+      </a>
     }
 
-    <!-- <a href="#" class="nav-item">
-      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-      </svg>
-      <span class="nav-item__label">Messages</span>
-      <span class="tag tag--blue">5</span>
-    </a> -->
 
     <!-- <p class="sidebar__section-label">System</p>
 
