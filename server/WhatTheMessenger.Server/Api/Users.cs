@@ -23,7 +23,7 @@ public static class Users
                 .Produces(StatusCodes.Status404NotFound)
                 .Produces(StatusCodes.Status401Unauthorized);
 
-            group.MapGet("/search/{query}", async (string query, IUserService userService) => userService.FindUsersAsync(query))
+            group.MapGet("/search/{query}", async (string query, IUserService userService) => userService.FindUserIdsAsync(query))
                 .RequireAuthorization()
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status401Unauthorized);
