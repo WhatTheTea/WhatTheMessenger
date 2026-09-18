@@ -43,7 +43,7 @@
       </svg>
       <span class="nav-item__label">Help</span>
     </a> -->
-    <a class="nav-item">
+    <a class="nav-item"  (click)="newChatDialog.open()">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -89,7 +89,11 @@
   } @else {
     <h2>No chat selected</h2>
   }
+  <app-nb-dialog #newChatDialog title="Test">
+      Test content
+  </app-nb-dialog>
 </main>
+
 
 <script>
   document.querySelectorAll('.nav-item').forEach((el) => {

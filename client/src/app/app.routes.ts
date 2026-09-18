@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { Home } from './features/home/home';
-import { Chats } from './features/chats/chats';
+import { ChatList } from './features/chats/chat-list';
 
 export const routes: Routes = [
   {
@@ -9,10 +9,10 @@ export const routes: Routes = [
   },
   {
     path: 'chats',
-    component: Chats,
+    component: ChatList,
   },
   {
     path: 'chats/:id',
-    component: Chats,
+    component: ChatList,
   },
 ];

@@ -5,14 +5,15 @@ import { ChatNavItem } from './chat-nav-item/chat-nav-item';
 import { ChatService, UserService } from '../../core';
 import { Chat } from '../../core/models/chat';
 import { Chat as ChatComponent } from './chat/chat';
+import { NbDialog } from '../../components/nb-dialog/nb-dialog';
 
 @Component({
   selector: 'app-chats',
-  imports: [ChatComponent, ChatNavItem],
-  templateUrl: './chats.html',
-  styleUrl: './chats.scss',
+  imports: [ChatComponent, ChatNavItem, NbDialog],
+  templateUrl: './chat-list.html',
+  styleUrl: './chat-list.scss',
 })
-export class Chats {
+export class ChatList {
   private authService = inject(AuthService);
   private router = inject(Router);
   private userService = inject(UserService);
