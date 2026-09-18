@@ -1,0 +1,40 @@
+<form class="nb-form-group nb-text-left m-4" [formGroup]="newChatForm" (ngSubmit)="onFormSubmit()">
+  <div class="field-group">
+    <label for="username">
+      <span class="text-xl">Username:</span>
+    </label>
+    <input class="nb-input default" id="name" type="text" formControlName="username" />
+
+    <label for="user-search" class="search-label">Search People</label>
+    <input
+      id="user-search"
+      type="text"
+      formControlName="query"
+      placeholder="Search by username or display name..."
+      class="nb-input default"
+      autocomplete="off"
+    />
+  </div>
+
+  @if (isLoading()) {
+    <div class="status-msg">Searching...</div>
+  }
+
+  <div class="results-list">
+    @for (user of searchResults(); track user.id) {
+      <div class="user-card" [class.selected]="isSelected(user)" (click)="toggleSelectUser(user)">
+        <div class="user-info">
+          <span class="display-name">{{ user.displayName }}</span>
+          <span class="username">&#64;{{ user.username }}</span>
+        </div>
+        <button type="button" class="select-btn">
+          {{ isSelected(user) ? '✓' : '+' }}
+        </button>
+      </div>
+    } @empty {
+      @if (!isLoading() && newChatForm.controls.query.value.trim().length > 0) {
+        <div class="status-msg">No users found</div>
+      }
+    }
+  </div>
+</form>

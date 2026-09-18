@@ -6,10 +6,11 @@ import { ChatService, UserService } from '../../core';
 import { Chat } from '../../core/models/chat';
 import { Chat as ChatComponent } from './chat/chat';
 import { NbDialog } from '../../components/nb-dialog/nb-dialog';
+import { NewChat } from './new-chat/new-chat';
 
 @Component({
   selector: 'app-chats',
-  imports: [ChatComponent, ChatNavItem, NbDialog],
+  imports: [ChatComponent, ChatNavItem, NbDialog, NewChat],
   templateUrl: './chat-list.html',
   styleUrl: './chat-list.scss',
 })
