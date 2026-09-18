@@ -13,7 +13,7 @@ public static class Users
 
             group.MapGet("/{id}", async (Guid id, IUserService userService) => 
                 {
-                    var result = userService.GetUserAsync(id);
+                    var result = await userService.GetUserAsync(id);
                     
                     return result is not null ? Results.Ok(result)
                         : Results.NotFound();
@@ -23,7 +23,7 @@ public static class Users
                 .Produces(StatusCodes.Status404NotFound)
                 .Produces(StatusCodes.Status401Unauthorized);
 
-            group.MapGet("/search/{query}", async (string query, IUserService userService) => userService.FindUserIdsAsync(query))
+            group.MapGet("/search/{query}", async (string query, IUserService userService) => await userService.FindUserIdsAsync(query))
                 .RequireAuthorization()
                 .Produces(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status401Unauthorized);
