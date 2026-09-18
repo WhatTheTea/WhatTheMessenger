@@ -5,5 +5,6 @@ export const environment: AppConfig = {
   useMocks: true,
   authApi: '',
   chatApi: '',
+  userApi: '',
   signalR: '',
 };

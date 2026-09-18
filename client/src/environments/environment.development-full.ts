@@ -5,5 +5,6 @@ export const environment: AppConfig = {
   useMocks: false,
   authApi: '/api/auth',
   chatApi: '/api/chats',
+  userApi: '/api/users',
   signalR: '/hubs/chat',
 };

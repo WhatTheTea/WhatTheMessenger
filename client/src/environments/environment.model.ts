@@ -5,5 +5,6 @@ export interface AppConfig {
   useMocks: boolean;
   signalR: string;
   chatApi: string;
+  userApi: string;
   authApi: string;
 }

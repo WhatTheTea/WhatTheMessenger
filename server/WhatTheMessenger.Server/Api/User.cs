@@ -26,7 +26,6 @@ public static class Users
             group.MapGet("/search/{query}", async (string query, IUserService userService) => userService.FindUsersAsync(query))
                 .RequireAuthorization()
                 .Produces(StatusCodes.Status200OK)
-                .Produces(StatusCodes.Status404NotFound)
                 .Produces(StatusCodes.Status401Unauthorized);
 
             return app;
