@@ -11,12 +11,15 @@ public static class Chat
         {
             var group = app.MapGroup("/api/chats");
 
-            group.MapPost("/create", async (NewChatModel newChat, IChatService chatService) => 
-                await chatService.CreateChatAsync(newChat))
-                    .RequireAuthorization()
-                    .Accepts(typeof(NewChatModel), System.Net.Mime.MediaTypeNames.Application.Json)
-                    .Produces(StatusCodes.Status202Accepted)
-                    .Produces(StatusCodes.Status401Unauthorized);
+            group.MapPost("/create", async (NewChatModel newChat, IChatService chatService) =>
+                {
+                    await chatService.CreateChatAsync(newChat);
+                    return Results.Accepted();
+                })
+                .RequireAuthorization()
+                .Accepts(typeof(NewChatModel), System.Net.Mime.MediaTypeNames.Application.Json)
+                .Produces(StatusCodes.Status202Accepted)
+                .Produces(StatusCodes.Status401Unauthorized);
 
             group.MapGet("/user/{id}", async (Guid id, IChatService chatService) =>
                 {
