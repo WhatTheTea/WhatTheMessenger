@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WhatTheMessenger.Application.Interfaces;
+using WhatTheMessenger.Application.Models;
 using WhatTheMessenger.Core.Models;
 
 namespace WhatTheMessenger.Application.Services;
@@ -10,7 +11,7 @@ public interface IUserService
 
     Task<Guid[]> FindUserIdsAsync(string query, CancellationToken token = default);
 
-    Task<User?> GetUserAsync(Guid id);
+    Task<UserModel?> GetUserAsync(Guid id);
 }
 
 public class UserService(IAppDbContext dbContext) : IUserService
@@ -23,7 +24,14 @@ public class UserService(IAppDbContext dbContext) : IUserService
         .Select(x => x.Id)
         .ToArrayAsync(cancellationToken: token);
 
-    public Task<User?> GetUserAsync(Guid id) => dbContext.Users.AsNoTracking()
+    public Task<UserModel?> GetUserAsync(Guid id) => dbContext.Users.AsNoTracking()
+        .Select(x => new UserModel()
+        {
+            Id = x.Id,
+            Username = x.UserName ?? string.Empty,
+            DisplayName = x.DisplayName,
+            // TODO: Review the relevancy of ChatIds field
+        })
         .SingleOrDefaultAsync(x => x.Id == id);
 
     private IQueryable<User> QueryUsers(string query)
