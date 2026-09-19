@@ -5,7 +5,7 @@ import {
   provideBrowserGlobalErrorListeners,
   Provider,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { catchError, of } from 'rxjs';
 
 import { AuthService, CookieAuthService, MockAuthService } from './core/auth';
@@ -34,7 +34,7 @@ function provideServices(): Provider[] {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    provideRouter(routes, withComponentInputBinding()),
     provideServices(),
     provideAppInitializer(() => {
       const auth = inject(AuthService);

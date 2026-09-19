@@ -1,6 +1,6 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, input, signal } from '@angular/core';
 import { AuthService } from '../../core/auth';
-import { Router } from '@angular/router';
+import { Router, RouterLinkActive, RouterLinkWithHref } from '@angular/router';
 import { ChatService, UserService } from '../../core';
 import { Chat } from '../../core/models/chat';
 import { Chat as ChatComponent } from './chat/chat';
@@ -10,7 +10,7 @@ import { guid } from '../../primitives';
 
 @Component({
   selector: 'app-chats',
-  imports: [ChatComponent, NbDialog, NewChat],
+  imports: [ChatComponent, NbDialog, NewChat, RouterLinkActive, RouterLinkWithHref],
   templateUrl: './chat-list.html',
   styleUrl: './chat-list.scss',
 })
@@ -21,7 +21,7 @@ export class ChatList {
   private chatService = inject(ChatService);
 
   userId = signal<guid>(this.authService.currentUser() ?? '');
-  chatId = signal<string | null>(null);
+  id = input<guid>();
   userDisplayName = signal<string | null>(null);
   userChats = signal<Chat[]>([]);
 

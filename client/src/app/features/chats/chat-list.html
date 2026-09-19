@@ -12,7 +12,7 @@
   <nav class="sidebar__nav">
 
     @for (chat of userChats(); track chat.id) {
-      <a class="nav-item">
+      <a class="nav-item" routerLinkActive="active" [routerLink]="['/chats', chat.id]">
         <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
@@ -20,28 +20,7 @@
         <!-- <span class="tag tag--blue">5</span> could be used for unread indicator -->
       </a>
     }
-
-
-    <!-- <p class="sidebar__section-label">System</p>
-
-    <a href="#" class="nav-item">
-      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="3" />
-        <path
-          d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M2 12h2M20 12h2M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41"
-        />
-      </svg>
-      <span class="nav-item__label">Settings</span>
-    </a>
-
-    <a href="#" class="nav-item">
-      <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 8v4" />
-        <path d="M12 16h.01" />
-      </svg>
-      <span class="nav-item__label">Help</span>
-    </a> -->
+    
     <a class="nav-item"  (click)="newChatDialog.open()">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -83,23 +62,13 @@
 
 <!-- MAIN -->
 <main class="main-content">
-  @if (chatId()) {
-    <app-chat [chatId]="chatId() ?? ''" />
+  @if (id()) {
+    <app-chat [chatId]="id() ?? ''" />
   } @else {
     <h2>No chat selected</h2>
   }
-  <app-nb-dialog #newChatDialog title="New chat">
-      <app-new-chat [creatorId]="userId()" (created)="newChatDialog.close()"></app-new-chat>
-  </app-nb-dialog>
 </main>
 
-
-<script>
-  document.querySelectorAll('.nav-item').forEach((el) => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      document.querySelectorAll('.nav-item').forEach((i) => i.classList.remove('active'));
-      el.classList.add('active');
-    });
-  });
-</script>
+<app-nb-dialog #newChatDialog title="New chat">
+    <app-new-chat [creatorId]="userId()" (created)="newChatDialog.close()"></app-new-chat>
+</app-nb-dialog>
