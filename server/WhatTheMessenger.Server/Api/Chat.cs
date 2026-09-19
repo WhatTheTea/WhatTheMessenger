@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using WhatTheMessenger.Application.Models;
 using WhatTheMessenger.Application.Services;
 
@@ -5,11 +6,25 @@ namespace WhatTheMessenger.Server.Api;
 
 public static class Chat
 {
-    extension (WebApplication app)
+    extension(WebApplication app)
     {
         public WebApplication MapChatEndpoints()
         {
             var group = app.MapGroup("/api/chats");
+
+            group.MapPost("/{id:guid}", async (Guid id, ClaimsPrincipal user, IChatService chatService) =>
+            {
+                var userIdClaim = user.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!Guid.TryParse(userIdClaim, out var userId))
+                {
+                    return Results.Unauthorized();
+                }
+
+                var result = await chatService.GetChatAsync(id, userId);
+
+                return result is not null ? Results.Ok(result)
+                    : Results.NotFound();
+            });
 
             group.MapPost("/create", async (NewChatModel newChat, IChatService chatService) =>
                 {
@@ -21,7 +36,7 @@ public static class Chat
                 .Produces(StatusCodes.Status202Accepted)
                 .Produces(StatusCodes.Status401Unauthorized);
 
-            group.MapGet("/user/{id}", async (Guid id, IChatService chatService) =>
+            group.MapGet("/user/{id:guid}", async (Guid id, IChatService chatService) =>
                 {
                     var chats = await chatService.GetChatsAsync(id);
                     return chats.Select(chat => new
@@ -30,9 +45,9 @@ public static class Chat
                         name = chat.Name,
                         users = chat.Users.Select(user => new
                         {
-                           id = user.Id,
-                           username = user.UserName,
-                           displayName = user.DisplayName, 
+                            id = user.Id,
+                            username = user.UserName,
+                            displayName = user.DisplayName,
                         }),
                         messages = chat.Messages.Select(message => new
                         {
@@ -41,7 +56,7 @@ public static class Chat
                             senderId = message.SenderId,
                             content = message.Content,
                             sentAt = message.SentAt,
-                            status = message.Status  
+                            status = message.Status
                         })
                     });
                 }

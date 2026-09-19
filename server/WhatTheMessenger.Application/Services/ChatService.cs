@@ -15,10 +15,19 @@ public interface IChatService
     Task<Chat> CreateChatAsync(NewChatModel chat);
 
     Task<Chat[]> GetChatsAsync(Guid userId);
+
+    Task<Chat?> GetChatAsync(Guid id, Guid userId);
 }
 
 public sealed class ChatService(IAppDbContext dbContext, IChatNotificationService notificationService) : IChatService
 {
+    public Task<Chat?> GetChatAsync(Guid id, Guid userId) => 
+        dbContext.Chats.AsNoTracking()
+            .Include(x => x.Messages)
+            .Include(x => x.Users)
+            .Where(chat => chat.Id == id && chat.Users.Any(user => user.Id == userId))
+            .SingleOrDefaultAsync();
+
     public async Task<Chat> CreateChatAsync(NewChatModel newChat)
     {
         var users = await dbContext.Users.Where(x => newChat.Participants.Contains(x.Id)).ToListAsync();

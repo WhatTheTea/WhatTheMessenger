@@ -11,7 +11,7 @@ public static class Users
         {
             var group = app.MapGroup("/api/users");
 
-            group.MapGet("/{id}", async (Guid id, IUserService userService) => 
+            group.MapGet("/{id:guid}", async (Guid id, IUserService userService) => 
                 {
                     var result = await userService.GetUserAsync(id);
                     
