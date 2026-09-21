@@ -41,14 +41,14 @@ public sealed record ChatDto
 
     public List<MessageDto> Messages { get; set; } = [];
 
-    public List<Guid> ParticipantIds { get; set; } = [];
+    public List<Guid> Users { get; set; } = [];
 
     public static ChatDto From(Chat chat) =>
         new()
         {
             Name = chat.Name ?? string.Empty,
             Messages = chat.Messages.Select(MessageDto.From).ToList(),
-            ParticipantIds = chat.Users.Select(x => x.Id).ToList(),
+            Users = chat.Users.Select(x => x.Id).ToList(),
             ChatId = chat.Id,
         };
 }
