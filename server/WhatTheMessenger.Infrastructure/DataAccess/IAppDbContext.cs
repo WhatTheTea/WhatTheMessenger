@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WhatTheMessenger.Core;
 
-using WhatTheMessenger.Core.Models;
-
-namespace WhatTheMessenger.Application.Interfaces;
+namespace WhatTheMessenger.Infrastructure.DataAccess;
 
 public interface IAppDbContext
 {

@@ -1,4 +1,4 @@
-﻿namespace WhatTheMessenger.Core.Models;
+﻿namespace WhatTheMessenger.Core;
 
 public enum MessageStatus
 {

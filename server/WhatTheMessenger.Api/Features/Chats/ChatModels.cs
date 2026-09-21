@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using WhatTheMessenger.Core.Models;
+using WhatTheMessenger.Core;
 
-namespace WhatTheMessenger.Application.Models;
+namespace WhatTheMessenger.Api.Features.Chats;
 
 public sealed record NewMessageModel
 {

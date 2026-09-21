@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using WhatTheMessenger.Application.Models;
-using WhatTheMessenger.Core.Models;
+using WhatTheMessenger.Core;
 
-namespace WhatTheMessenger.Api.Endpoints;
+namespace WhatTheMessenger.Api.Features.Users;
 
 public static class AuthEndpoints
 {

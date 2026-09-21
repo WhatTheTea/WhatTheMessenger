@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using WhatTheMessenger.Application.Interfaces;
 using WhatTheMessenger.Application.Models;
-using WhatTheMessenger.Core.Models;
+using WhatTheMessenger.Core;
+using WhatTheMessenger.Infrastructure.DataAccess;
 
-namespace WhatTheMessenger.Application.Services;
+namespace WhatTheMessenger.Api.Features.Users;
 
 public interface IUserService
 {

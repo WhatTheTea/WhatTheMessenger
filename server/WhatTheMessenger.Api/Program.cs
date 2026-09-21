@@ -6,6 +6,7 @@ using WhatTheMessenger.Infrastructure.Hubs;
 using WhatTheMessenger.Infrastructure.Services;
 using WhatTheMessenger.Api;
 using WhatTheMessenger.Api.Endpoints;
+using WhatTheMessenger.Api.Features.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 

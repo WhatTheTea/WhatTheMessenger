@@ -1,4 +1,4 @@
-using WhatTheMessenger.Application.Services;
+using WhatTheMessenger.Api.Features.Users;
 
 namespace WhatTheMessenger.Api.Endpoints;
 

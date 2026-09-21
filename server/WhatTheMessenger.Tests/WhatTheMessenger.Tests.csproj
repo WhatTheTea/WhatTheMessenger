@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WhatTheMessenger.Core\WhatTheMessenger.Core.csproj" />
-    <ProjectReference Include="..\WhatTheMessenger.Application\WhatTheMessenger.Application.csproj" />
     <ProjectReference Include="..\WhatTheMessenger.Infrastructure\WhatTheMessenger.Infrastructure.csproj" />
   </ItemGroup>
 

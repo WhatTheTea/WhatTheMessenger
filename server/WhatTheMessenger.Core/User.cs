@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace WhatTheMessenger.Core.Models;
+namespace WhatTheMessenger.Core;
 
 public sealed class User : IdentityUser<Guid>
 {

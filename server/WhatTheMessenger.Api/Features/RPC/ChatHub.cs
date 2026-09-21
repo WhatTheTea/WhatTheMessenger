@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using WhatTheMessenger.Application.Models;
+using WhatTheMessenger.Api.Features.Chats;
 
-namespace WhatTheMessenger.Infrastructure.Hubs;
+namespace WhatTheMessenger.Api.Features.RPC;
 
 public interface IChatHub
 {

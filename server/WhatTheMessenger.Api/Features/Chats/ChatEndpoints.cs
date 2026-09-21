@@ -1,8 +1,6 @@
 using System.Security.Claims;
-using WhatTheMessenger.Application.Models;
-using WhatTheMessenger.Application.Services;
 
-namespace WhatTheMessenger.Api.Endpoints;
+namespace WhatTheMessenger.Api.Features.Chats;
 
 public static class ChatEndpoints
 {

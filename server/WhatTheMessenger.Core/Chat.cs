@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace WhatTheMessenger.Core.Models;
+namespace WhatTheMessenger.Core;
 
 public sealed class Chat
 {

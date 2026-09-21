@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.SignalR;
-using WhatTheMessenger.Application.Interfaces;
-using WhatTheMessenger.Application.Models;
-using WhatTheMessenger.Core.Models;
-using WhatTheMessenger.Infrastructure.Hubs;
+using WhatTheMessenger.Api.Features.Chats;
+using WhatTheMessenger.Api.Features.RPC;
+using WhatTheMessenger.Core;
 
 namespace WhatTheMessenger.Infrastructure.Services;
+
 // TODO: Wire it up and add Redis pub-sub
 public class SignalRChatNotificationService(IHubContext<ChatHub, IChatHub> hub) : IChatNotificationService
 {

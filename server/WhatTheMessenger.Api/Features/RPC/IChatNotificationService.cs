@@ -1,6 +1,6 @@
-using WhatTheMessenger.Core.Models;
+using WhatTheMessenger.Core;
 
-namespace WhatTheMessenger.Application.Interfaces;
+namespace WhatTheMessenger.Api.Features.RPC;
 
 public interface IChatNotificationService
 {

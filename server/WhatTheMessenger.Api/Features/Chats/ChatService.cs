@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WhatTheMessenger.Api.Features.RPC;
+using WhatTheMessenger.Core;
+using WhatTheMessenger.Infrastructure.DataAccess;
 
-using System;
-
-using WhatTheMessenger.Application.Interfaces;
-using WhatTheMessenger.Application.Models;
-using WhatTheMessenger.Core.Models;
-
-namespace WhatTheMessenger.Application.Services;
+namespace WhatTheMessenger.Api.Features.Chats;
 
 public interface IChatService
 {
