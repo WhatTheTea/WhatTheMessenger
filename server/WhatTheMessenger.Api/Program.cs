@@ -1,12 +1,10 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.ResponseCompression;
-using WhatTheMessenger.Application.Interfaces;
-using WhatTheMessenger.Application.Services;
-using WhatTheMessenger.Infrastructure.Hubs;
 using WhatTheMessenger.Infrastructure.Services;
 using WhatTheMessenger.Api;
-using WhatTheMessenger.Api.Endpoints;
 using WhatTheMessenger.Api.Features.Users;
+using WhatTheMessenger.Api.Features.RPC;
+using WhatTheMessenger.Api.Features.Chats;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +20,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 builder.ConfigureDataAccess();
-builder.ConfigureIdentityAuth();
+builder.ConfigureCookieIdentityAuth();
 
 builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationService>();
 builder.Services.AddScoped<IChatService, ChatService>();

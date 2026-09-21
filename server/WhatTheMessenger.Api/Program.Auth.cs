@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using WhatTheMessenger.Application.Services;
-using WhatTheMessenger.Core.Models;
 using WhatTheMessenger.Infrastructure.DataAccess;
-using WhatTheMessenger.Api.Services;
+using WhatTheMessenger.Core;
 
 namespace WhatTheMessenger.Api;
 
@@ -10,7 +8,7 @@ public static partial class Configuration
 {
     extension(WebApplicationBuilder builder)
     {
-        public WebApplicationBuilder ConfigureIdentityAuth()
+        public WebApplicationBuilder ConfigureCookieIdentityAuth()
         {
             builder.Services.AddIdentityCore<User>(options =>
                 {
@@ -34,31 +32,6 @@ public static partial class Configuration
                 options.Events.OnRedirectToLogin = context =>
                 {
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    return Task.CompletedTask;
-                };
-            });
-
-            return builder;
-        }
-
-        public WebApplicationBuilder ConfigureBlazorAuth()
-        {
-            builder.Services.AddCascadingAuthenticationState();
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-            
-            builder.Services.ConfigureApplicationCookie(options =>
-            {
-                options.Events.OnRedirectToLogin = context =>
-                {
-                    if (context.Request.Path.StartsWithSegments("/api"))
-                    {
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    }
-                    else
-                    {
-                        context.Response.Redirect("auth/login");
-                    }
                     return Task.CompletedTask;
                 };
             });
