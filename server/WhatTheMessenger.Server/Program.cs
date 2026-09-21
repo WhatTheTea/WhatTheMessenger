@@ -1,20 +1,13 @@
 using System.Text.Json;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.AspNetCore.SignalR.Client;
 using WhatTheMessenger.Application.Interfaces;
 using WhatTheMessenger.Application.Services;
 using WhatTheMessenger.Infrastructure.Hubs;
 using WhatTheMessenger.Infrastructure.Services;
 using WhatTheMessenger.Server;
 using WhatTheMessenger.Server.Api;
-using WhatTheMessenger.Server.App;
 
 var builder = WebApplication.CreateBuilder(args);
-
-if (builder.Configuration.GetValue<bool>("single-process"))
-    builder.Services.AddRazorComponents()
-        .AddInteractiveServerComponents();
 
 builder.Services.AddSignalR();
 builder.Services.AddResponseCompression(opts =>
@@ -29,26 +22,10 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 builder.ConfigureDataAccess();
 builder.ConfigureIdentityAuth();
-builder.ConfigureBlazorAuth();
 
 builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IUserService, UserService>();
-if (builder.Configuration.GetValue<bool>("single-process"))
-    builder.Services.AddScoped(provider =>
-    {
-        var httpContextAccessor = provider.GetRequiredService<IHttpContextAccessor>();
-        var navigation = provider.GetRequiredService<NavigationManager>();
-        var clientHubConnection = new HubConnectionBuilder()
-            .WithUrl(navigation.ToAbsoluteUri("/hubs/chat"), options => {
-                var cookie = httpContextAccessor.HttpContext?.Request?.Headers?.Cookie;
-                if(cookie.HasValue)
-                    options.Headers.Add("Cookie", cookie.Value.ToString());
-            })
-            .Build(); 
-        
-        return clientHubConnection;
-    });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -69,14 +46,6 @@ else
     app.UseHsts();
 }
 app.UseHttpsRedirection();
-
-if (app.Configuration.GetValue<bool>("single-process"))
-{
-    app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
-    app.MapStaticAssets();
-    app.MapRazorComponents<App>()
-        .AddInteractiveServerRenderMode();
-}
 app.UseAntiforgery();
 
 app.MapAuthEndpoints();
