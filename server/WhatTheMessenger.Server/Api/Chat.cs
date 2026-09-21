@@ -12,7 +12,7 @@ public static class Chat
         {
             var group = app.MapGroup("/api/chats");
 
-            group.MapPost("/{id:guid}", async (Guid id, ClaimsPrincipal user, IChatService chatService) =>
+            group.MapGet("/{id:guid}", async (Guid id, ClaimsPrincipal user, IChatService chatService) =>
             {
                 var userIdClaim = user.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (!Guid.TryParse(userIdClaim, out var userId))
@@ -22,9 +22,13 @@ public static class Chat
 
                 var result = await chatService.GetChatAsync(id, userId);
 
-                return result is not null ? Results.Ok(result)
+                return result is not null ? Results.Ok(ChatDto.From(result))
                     : Results.NotFound();
-            });
+            })
+            .RequireAuthorization()
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound)
+            .Produces(StatusCodes.Status401Unauthorized);
 
             group.MapPost("/create", async (NewChatModel newChat, IChatService chatService) =>
                 {

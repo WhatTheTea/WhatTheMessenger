@@ -21,7 +21,7 @@ public sealed record MessageDto
     public required string Content { get; set; }
     public required Guid ChatId { get; set; }
     public required Guid SenderId { get; set; }
-    public required string SenderName { get; set; } 
+    public required string SenderName { get; set; }
 
     public static MessageDto From(Message message) =>
         new()
@@ -37,9 +37,18 @@ public sealed record ChatDto
 {
     public required Guid ChatId { get; set; }
 
+    public required string Name { get; set; }
+
+    public List<MessageDto> Messages { get; set; } = [];
+
+    public List<Guid> ParticipantIds { get; set; } = [];
+
     public static ChatDto From(Chat chat) =>
         new()
         {
+            Name = chat.Name ?? string.Empty,
+            Messages = chat.Messages.Select(MessageDto.From).ToList(),
+            ParticipantIds = chat.Users.Select(x => x.Id).ToList(),
             ChatId = chat.Id,
         };
 }
