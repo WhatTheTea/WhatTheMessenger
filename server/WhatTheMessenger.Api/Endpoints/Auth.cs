@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using WhatTheMessenger.Application.Models;
 using WhatTheMessenger.Core.Models;
 
-namespace WhatTheMessenger.Server.Endpoints;
+namespace WhatTheMessenger.Api.Endpoints;
 
 public static class AuthEndpoints
 {

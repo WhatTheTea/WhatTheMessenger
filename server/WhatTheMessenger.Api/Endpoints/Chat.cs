@@ -2,7 +2,7 @@ using System.Security.Claims;
 using WhatTheMessenger.Application.Models;
 using WhatTheMessenger.Application.Services;
 
-namespace WhatTheMessenger.Server.Endpoints;
+namespace WhatTheMessenger.Api.Endpoints;
 
 public static class ChatEndpoints
 {

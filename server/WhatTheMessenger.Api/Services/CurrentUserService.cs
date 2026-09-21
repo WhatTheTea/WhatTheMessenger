@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 using WhatTheMessenger.Application.Services;
 
-namespace WhatTheMessenger.Server.Services;
+namespace WhatTheMessenger.Api.Services;
 
 public sealed class CurrentUserService(AuthenticationStateProvider authenticationProvider) : ICurrentUserService
 {

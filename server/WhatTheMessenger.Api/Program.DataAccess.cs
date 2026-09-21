@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WhatTheMessenger.Application.Interfaces;
 using WhatTheMessenger.Infrastructure.DataAccess;
 
-namespace WhatTheMessenger.Server;
+namespace WhatTheMessenger.Api;
 
 public static partial class Configuration
 {

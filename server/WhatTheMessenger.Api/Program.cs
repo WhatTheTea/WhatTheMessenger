@@ -4,8 +4,8 @@ using WhatTheMessenger.Application.Interfaces;
 using WhatTheMessenger.Application.Services;
 using WhatTheMessenger.Infrastructure.Hubs;
 using WhatTheMessenger.Infrastructure.Services;
-using WhatTheMessenger.Server;
-using WhatTheMessenger.Server.Endpoints;
+using WhatTheMessenger.Api;
+using WhatTheMessenger.Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 

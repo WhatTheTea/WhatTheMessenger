@@ -1,6 +1,6 @@
 using WhatTheMessenger.Application.Services;
 
-namespace WhatTheMessenger.Server.Endpoints;
+namespace WhatTheMessenger.Api.Endpoints;
 
 public static class UserEndpoints
 {

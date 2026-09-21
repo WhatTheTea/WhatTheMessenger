@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using WhatTheMessenger.Application.Services;
 using WhatTheMessenger.Core.Models;
 using WhatTheMessenger.Infrastructure.DataAccess;
-using WhatTheMessenger.Server.Services;
+using WhatTheMessenger.Api.Services;
 
-namespace WhatTheMessenger.Server;
+namespace WhatTheMessenger.Api;
 
 public static partial class Configuration
 {
