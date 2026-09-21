@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using WhatTheMessenger.Application.Models;
 using WhatTheMessenger.Core.Models;
 
-namespace WhatTheMessenger.Server.Api;
+namespace WhatTheMessenger.Server.Endpoints;
 
-public static class Auth
+public static class AuthEndpoints
 {
     extension(WebApplication app)
     {

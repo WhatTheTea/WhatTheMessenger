@@ -1,9 +1,8 @@
-using WhatTheMessenger.Application.Models;
 using WhatTheMessenger.Application.Services;
 
-namespace WhatTheMessenger.Server.Api;
+namespace WhatTheMessenger.Server.Endpoints;
 
-public static class Users
+public static class UserEndpoints
 {
     extension (WebApplication app)
     {

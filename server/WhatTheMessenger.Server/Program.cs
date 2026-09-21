@@ -5,7 +5,7 @@ using WhatTheMessenger.Application.Services;
 using WhatTheMessenger.Infrastructure.Hubs;
 using WhatTheMessenger.Infrastructure.Services;
 using WhatTheMessenger.Server;
-using WhatTheMessenger.Server.Api;
+using WhatTheMessenger.Server.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 

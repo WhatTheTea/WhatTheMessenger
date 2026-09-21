@@ -2,9 +2,9 @@ using System.Security.Claims;
 using WhatTheMessenger.Application.Models;
 using WhatTheMessenger.Application.Services;
 
-namespace WhatTheMessenger.Server.Api;
+namespace WhatTheMessenger.Server.Endpoints;
 
-public static class Chat
+public static class ChatEndpoints
 {
     extension(WebApplication app)
     {
