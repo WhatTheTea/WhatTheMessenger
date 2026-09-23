@@ -14,7 +14,7 @@ public static class ChatEndpoints
     {
         public WebApplication MapChatEndpoints()
         {
-            var group = app.MapGroup("/api/chats");
+            var group = app.MapGroup("/api/v1/chats");
 
             group.MapGet("/user/me", async (ClaimsPrincipal claims, IAppDbContext dbContext) =>
             {

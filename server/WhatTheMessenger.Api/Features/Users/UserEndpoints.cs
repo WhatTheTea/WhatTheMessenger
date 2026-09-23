@@ -13,7 +13,7 @@ public static class UserEndpoints
     {
         public WebApplication MapUserEndpoints()
         {
-            var group = app.MapGroup("/api/users")
+            var group = app.MapGroup("/api/v1/users")
                 .RequireAuthorization();
 
             group.MapGet("/search/{query}", async (string query, IHandler<GetUsers.Request, GetUsers.Response> handler) 

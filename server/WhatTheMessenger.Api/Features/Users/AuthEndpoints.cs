@@ -11,7 +11,7 @@ public static class AuthEndpoints
     {
         public WebApplication MapAuthEndpoints()
         {
-            var group = app.MapGroup("/api/auth");
+            var group = app.MapGroup("/api/v1/auth");
 
             group.MapGet("/me", async (ClaimsPrincipal principal, UserManager<User> userManager) =>
                 {
