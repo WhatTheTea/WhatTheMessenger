@@ -17,11 +17,11 @@ public static class AuthEndpoints
                 {
                     var user = await userManager.GetUserAsync(principal);
                     return user is not null 
-                        ? Results.Ok(user) 
+                        ? Results.Ok(UserDto.From(user)) 
                         : Results.Unauthorized();
                 })
                 .RequireAuthorization()
-                .Produces(StatusCodes.Status200OK)
+                .Produces<UserDto>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status401Unauthorized);
 
             group.MapPost("/logout", (SignInManager<User> signInManager) => signInManager.SignOutAsync())

@@ -13,6 +13,12 @@ public static class UserEndpoints
             var group = app.MapGroup("/api/users")
                 .RequireAuthorization();
 
+            group.MapGet("/search/{query}", async (string query, [FromServices] GetUsers.Handler handler) 
+                => await handler.HandleAsync(new(query)))
+                .RequireAuthorization()
+                .Produces(StatusCodes.Status200OK)
+                .Produces(StatusCodes.Status401Unauthorized);
+
             group.MapGet("/{id:guid}", async (Guid id, IAppDbContext dbContext) =>
                 {
                     var user = await dbContext.Users.AsNoTracking()
@@ -22,15 +28,10 @@ public static class UserEndpoints
                         ? Results.Ok(UserDto.From(user))
                         : Results.NotFound();
                 })
-                .Produces(StatusCodes.Status200OK)
+                .Produces<UserDto>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status404NotFound)
                 .Produces(StatusCodes.Status401Unauthorized);
 
-            group.MapGet("/search", async ([FromBody] GetUsers.Request request, [FromServices] GetUsers.Handler handler) 
-                => await handler.HandleAsync(request))
-                .RequireAuthorization()
-                .Produces(StatusCodes.Status200OK)
-                .Produces(StatusCodes.Status401Unauthorized);
 
             return app;
         }

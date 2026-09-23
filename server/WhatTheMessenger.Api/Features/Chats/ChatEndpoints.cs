@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using WhatTheMessenger.Infrastructure.DataAccess;
 
 namespace WhatTheMessenger.Api.Features.Chats;
 
@@ -10,7 +12,7 @@ public static class ChatEndpoints
         {
             var group = app.MapGroup("/api/chats");
 
-            group.MapGet("/{id:guid}", async (Guid id, ClaimsPrincipal user, IChatService chatService) =>
+            group.MapGet("/{id:guid}", async (Guid id, ClaimsPrincipal user, IAppDbContext dbContext) =>
             {
                 var userIdClaim = user.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (!Guid.TryParse(userIdClaim, out var userId))
@@ -18,13 +20,17 @@ public static class ChatEndpoints
                     return Results.Unauthorized();
                 }
 
-                var result = await chatService.GetChatAsync(id, userId);
+                var result = await dbContext.Chats.AsNoTracking()
+                    .Include(x => x.Messages)
+                    .Include(x => x.Users)
+                    .Where(chat => chat.Id == id && chat.Users.Any(user => user.Id == userId))
+                    .SingleOrDefaultAsync();
 
                 return result is not null ? Results.Ok(ChatDto.From(result))
                     : Results.NotFound();
             })
             .RequireAuthorization()
-            .Produces(StatusCodes.Status200OK)
+            .Produces<ChatDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status401Unauthorized);
 
@@ -41,30 +47,10 @@ public static class ChatEndpoints
             group.MapGet("/user/{id:guid}", async (Guid id, IChatService chatService) =>
                 {
                     var chats = await chatService.GetChatsAsync(id);
-                    return chats.Select(chat => new
-                    {
-                        id = chat.Id,
-                        name = chat.Name,
-                        users = chat.Users.Select(user => new
-                        {
-                            id = user.Id,
-                            username = user.UserName,
-                            displayName = user.DisplayName,
-                        }),
-                        messages = chat.Messages.Select(message => new
-                        {
-                            id = message.Id,
-                            chatId = chat.Id,
-                            senderId = message.SenderId,
-                            content = message.Content,
-                            sentAt = message.SentAt,
-                            status = message.Status
-                        })
-                    });
-                }
-                )
+                    return chats.Select(chat => ChatDto.From(chat)).ToArray();
+                })
                 .RequireAuthorization()
-                .Produces(StatusCodes.Status200OK)
+                .Produces<ChatDto[]>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status401Unauthorized);
 
             return app;
