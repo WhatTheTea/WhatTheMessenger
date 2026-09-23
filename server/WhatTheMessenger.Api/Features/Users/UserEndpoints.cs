@@ -6,6 +6,9 @@ namespace WhatTheMessenger.Api.Features.Users;
 
 public static class UserEndpoints
 {
+    public static IServiceCollection AddUserHandlers(this IServiceCollection services) =>
+        services.AddTransient<IHandler<GetUsers.Request, GetUsers.Response>>();
+
     extension(WebApplication app)
     {
         public WebApplication MapUserEndpoints()
@@ -13,7 +16,7 @@ public static class UserEndpoints
             var group = app.MapGroup("/api/users")
                 .RequireAuthorization();
 
-            group.MapGet("/search/{query}", async (string query, [FromServices] GetUsers.Handler handler) 
+            group.MapGet("/search/{query}", async (string query, IHandler<GetUsers.Request, GetUsers.Response> handler) 
                 => await handler.HandleAsync(new(query)))
                 .RequireAuthorization()
                 .Produces(StatusCodes.Status200OK)

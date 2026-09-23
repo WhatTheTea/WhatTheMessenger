@@ -10,7 +10,7 @@ public class SignalRChatNotificationService(IHubContext<ChatHub, IChatHub> hub) 
 {
     public Task NotifyChatCreated(Chat chat)
     {
-        var model = ChatDto.From(chat);
+        var model = ChatDto.FromEntity(chat);
         var receiverIds = IdsFrom(chat.Users);
 
         return hub.Clients.Users(receiverIds).ChatCreated(model);

@@ -23,8 +23,12 @@ builder.ConfigureDataAccess();
 builder.ConfigureCookieIdentityAuth();
 
 builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationService>();
-builder.Services.AddScoped<IChatService, ChatService>();
-builder.Services.AddScoped<IUserService, UserService>();
+
+// Add slice handlers
+builder.Services
+    .AddUserHandlers()
+    .AddChatHandlers()
+    ;
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -47,9 +51,11 @@ else
 app.UseHttpsRedirection();
 app.UseAntiforgery();
 
-app.MapAuthEndpoints();
-app.MapChatEndpoints();
-app.MapUserEndpoints();
+app
+    .MapAuthEndpoints()
+    .MapChatEndpoints()
+    .MapUserEndpoints()
+    ;
 
 if (app.Environment.IsProduction())
 {
