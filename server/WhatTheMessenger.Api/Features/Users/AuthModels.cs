@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WhatTheMessenger.Application.Models;
+namespace WhatTheMessenger.Api.Features.Users;
 
 public sealed record RegisterModel
 {

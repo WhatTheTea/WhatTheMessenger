@@ -10,7 +10,7 @@ public class SignalRChatNotificationService(IHubContext<ChatHub, IChatHub> hub) 
 {
     public Task NotifyChatCreated(Chat chat)
     {
-        var model = ChatDto.FromEntity(chat);
+        var model = ChatDto.FromEntity.Compile()(chat);
         var receiverIds = IdsFrom(chat.Users);
 
         return hub.Clients.Users(receiverIds).ChatCreated(model);
@@ -18,7 +18,7 @@ public class SignalRChatNotificationService(IHubContext<ChatHub, IChatHub> hub) 
 
     public Task NotifyMessageSent(Message message)
     {
-        var model = MessageDto.From(message);
+        var model = MessageDto.FromEntity.Compile()(message);
         var receiverIds = IdsFrom(message.Chat.Users);
 
         return hub.Clients.Users(receiverIds).MessageReceived(model);

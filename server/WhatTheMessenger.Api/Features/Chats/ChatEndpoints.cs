@@ -41,7 +41,7 @@ public static class ChatEndpoints
                     .Select(ChatDto.FromEntity)
                     .SingleOrDefaultAsync(chat => chat.ChatId == id);
 
-                return result is not null ? Results.Ok()
+                return result is not null ? Results.Ok(result)
                     : Results.NotFound();
             })
             .RequireAuthorization()

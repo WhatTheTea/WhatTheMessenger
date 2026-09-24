@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using WhatTheMessenger.Application.Models;
 using WhatTheMessenger.Core;
 
 namespace WhatTheMessenger.Api.Features.Users;

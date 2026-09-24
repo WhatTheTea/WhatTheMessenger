@@ -21,6 +21,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 
 builder.ConfigureDataAccess();
 builder.ConfigureCookieIdentityAuth();
+builder.Services.AddAntiforgery();
 
 builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationService>();
 

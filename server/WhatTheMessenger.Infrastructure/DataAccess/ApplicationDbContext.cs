@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-
-using WhatTheMessenger.Application.Interfaces;
-using WhatTheMessenger.Core.Models;
+using WhatTheMessenger.Core;
 
 namespace WhatTheMessenger.Infrastructure.DataAccess;
 

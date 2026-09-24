@@ -7,7 +7,7 @@ namespace WhatTheMessenger.Api.Features.Users;
 public static class UserEndpoints
 {
     public static IServiceCollection AddUserHandlers(this IServiceCollection services) =>
-        services.AddTransient<IHandler<GetUsers.Request, GetUsers.Response>>();
+        services.AddTransient<IHandler<GetUsers.Request, GetUsers.Response>, GetUsers.Handler>();
 
     extension(WebApplication app)
     {
@@ -19,7 +19,7 @@ public static class UserEndpoints
             group.MapGet("/search/{query}", async (string query, IHandler<GetUsers.Request, GetUsers.Response> handler) 
                 => await handler.HandleAsync(new(query)))
                 .RequireAuthorization()
-                .Produces(StatusCodes.Status200OK)
+                .Produces<UserDto[]>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status401Unauthorized);
 
             group.MapGet("/{id:guid}", async (Guid id, IAppDbContext dbContext) =>
