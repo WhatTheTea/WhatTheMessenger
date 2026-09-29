@@ -8,7 +8,7 @@ namespace WhatTheMessenger.Api.Features.Chats;
 public static class ChatEndpoints
 {
     public static IServiceCollection AddChatHandlers(this IServiceCollection services) =>
-        services.AddTransient<IHandler<CreateChat.Request, Nothing>, CreateChat.Handler>();
+        services.AddTransient<IHandler<CreateChat.Request, CreateChat.Response>, CreateChat.Handler>();
 
     extension(WebApplication app)
     {
@@ -49,7 +49,7 @@ public static class ChatEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .Produces(StatusCodes.Status401Unauthorized);
 
-            group.MapPost("/create", async (CreateChat.Request request, IHandler<CreateChat.Request, Nothing> handler) =>
+            group.MapPost("/create", async (CreateChat.Request request, IHandler<CreateChat.Request, CreateChat.Response> handler) =>
                 {
                     await handler.HandleAsync(request);
                     return Results.Accepted();

@@ -1,9 +1,9 @@
 using Shouldly;
-using WhatTheMessenger.Application.Services;
-using WhatTheMessenger.Core.Models;
+using WhatTheMessenger.Api.Features.Users;
+using WhatTheMessenger.Core;
 using WhatTheMessenger.Tests.Utils;
 
-namespace WhatTheMessenger.Tests;
+namespace WhatTheMessenger.Tests.Slice;
 
 public class UserTests(SqliteFixture dbFixture) : IClassFixture<SqliteFixture> 
 {
@@ -16,10 +16,10 @@ public class UserTests(SqliteFixture dbFixture) : IClassFixture<SqliteFixture>
         User[] users = [userFactory.Create("alex"), userFactory.Create("alexia"), userFactory.Create("andrew")];
 
         using var actContext = dbFixture.GetDbContext();
-        var userService = new UserService(actContext);
-        var foundAlexUsers = await userService.FindUsersAsync("alex");
+        var getUsersHandler = new GetUsers.Handler(arrangeContext);
+        var foundAlexUsers = await getUsersHandler.HandleAsync(new("alex"));
 
-        foundAlexUsers.Length.ShouldBe(2);
+        foundAlexUsers.Users.Count().ShouldBe(2);
     }
 
     [Fact]
@@ -30,10 +30,10 @@ public class UserTests(SqliteFixture dbFixture) : IClassFixture<SqliteFixture>
         var userFactory = new UserFactory(arrangeContext);
         User[] users = [userFactory.Create("alex"), userFactory.Create("alexia"), userFactory.Create("andrew")];
 
-        using var actContext = dbFixture.GetDbContext();
-        var userService = new UserService(actContext);
-        var foundTestUsers = await userService.FindUsersAsync("test");
+         using var actContext = dbFixture.GetDbContext();
+        var getUsersHandler = new GetUsers.Handler(arrangeContext);
+        var foundAlexUsers = await getUsersHandler.HandleAsync(new("test"));
 
-        foundTestUsers.Length.ShouldBe(3);
+        foundAlexUsers.Users.Count().ShouldBe(3);
     }
 }

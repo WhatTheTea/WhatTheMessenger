@@ -1,4 +1,4 @@
-using WhatTheMessenger.Core.Models;
+using WhatTheMessenger.Core;
 
 namespace WhatTheMessenger.Tests.Utils;
 

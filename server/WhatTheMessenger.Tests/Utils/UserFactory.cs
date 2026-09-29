@@ -1,6 +1,5 @@
-using System;
-using WhatTheMessenger.Application.Interfaces;
-using WhatTheMessenger.Core.Models;
+using WhatTheMessenger.Core;
+using WhatTheMessenger.Infrastructure.DataAccess;
 
 namespace WhatTheMessenger.Tests.Utils;
 

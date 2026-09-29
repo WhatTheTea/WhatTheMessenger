@@ -7,11 +7,12 @@ namespace WhatTheMessenger.Api.Features.Chats;
 
 public static class CreateChat
 {
-    public sealed record Request(string Name, Guid[] Participants);
+    public sealed record Request(string Name, IEnumerable<Guid> Participants);
+    public sealed record Response(Guid NewChatId);
 
-    public sealed class Handler(IAppDbContext dbContext, IChatNotificationService notificationService) : IHandler<Request, Nothing>
+    public sealed class Handler(IAppDbContext dbContext, IChatNotificationService notificationService) : IHandler<Request, Response>
     {
-        public async Task<Nothing> HandleAsync(Request request, CancellationToken ct = default)
+        public async Task<Response> HandleAsync(Request request, CancellationToken ct = default)
         {
             var (chatName, participants) = request;
 
@@ -21,14 +22,13 @@ public static class CreateChat
                 Name = chatName ?? string.Join(", ", users.Select(x => x.DisplayName)),
                 Users = users
             };
-
             dbContext.Chats.Add(chat);
 
             await dbContext.SaveChangesAsync(ct);
             await notificationService.NotifyChatCreated(chat);
 
 
-            return Nothing.Default;
+            return new(chat.Id);
         }
     }
 }

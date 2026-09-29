@@ -1,6 +1,5 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using WhatTheMessenger.Application.Interfaces;
 using WhatTheMessenger.Infrastructure.DataAccess;
 
 namespace WhatTheMessenger.Tests.Utils;
@@ -10,7 +9,14 @@ public sealed class Disposable(Action dispose) : IDisposable
     public void Dispose() => dispose();
 }
 
-public sealed class SqliteFixture : IDisposable
+public interface IDbFixture
+{
+    void Dispose();
+    ApplicationDbContext GetDbContext();
+    IDisposable UseDb();
+}
+
+public sealed class SqliteFixture : IDisposable, IDbFixture
 {
     private readonly SqliteConnection sqlite;
 
