@@ -6,65 +6,39 @@ using WhatTheMessenger.Tests.Utils;
 
 namespace WhatTheMessenger.Tests.Api;
 
-public class AuthApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
+public class UserApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
 {
     [Fact]
-    public async Task Register_UserIsRegistered()
-    {
-        using var _ = DbFixture.UseDb();
-        using var dbContext = DbFixture.GetDbContext();
-
-        var request = new RegisterModel()
-        {
-            Login = "test",
-            Nickname = "test test",
-            Password = "Testpass123"
-        };
-
-        var response = await Client.PostAsJsonAsync(AuthEndpoints.AuthEndpointPrefix + "/register", request);
-
-        response.IsSuccessStatusCode.ShouldBeTrue();
-        dbContext.Users.FirstOrDefault(x => x.NormalizedUserName == "TEST").ShouldNotBeNull();
-        response.Headers.Contains("Set-Cookie").ShouldBeTrue();
-    }
-
-    [Fact]
-    public async Task Login_UserIsSignedIn()
+    public async Task Search_ReturnsMatchingUsers()
     {
         using var _ = DbFixture.UseDb();
         using var dbContext = DbFixture.GetDbContext();
         var userFactory = new UserFactory(dbContext);
-        var user = userFactory.Create("test");
-
-        var request = new LoginModel()
-        {
-            Login = user.UserName!,
-            Password = "Testpass123",
-            RememberMe = true,
-        };
-        var response = await Client.PostAsJsonAsync(AuthEndpoints.AuthEndpointPrefix + "/login", request);
-
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
-        response.Headers.Contains("Set-Cookie").ShouldBeTrue();
-    }
-
-    [Fact]
-    public async Task Me_ReturnsUserDto_WhenLoggedIn()
-    {
-        using var _ = DbFixture.UseDb();
-        using var dbContext = DbFixture.GetDbContext();
-        var userFactory = new UserFactory(dbContext);
-        var user = userFactory.Create("testuser");
+        
+        var targetUser = userFactory.Create("search_target");
+        var currentUser = userFactory.Create("current_user");
 
         // pretend user is signed in
-        Client.DefaultRequestHeaders.Add("X-Test-UserId", user.Id.ToString());
-
-        var response = await Client.GetAsync(AuthEndpoints.AuthEndpointPrefix + "/me");
+        Client.DefaultRequestHeaders.Add("X-Test-UserId", currentUser.Id.ToString());
+        var response = await Client.GetAsync(UserEndpoints.Prefix + $"/search/{targetUser.UserName}");
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+        
+        var results = await response.Content.ReadFromJsonAsync<GetUsers.Response>();
+        results.ShouldNotBeNull();
+        results.Users.ShouldContain(u => u.Username == targetUser.UserName);
+    }
 
-        var userDto = await response.Content.ReadFromJsonAsync<UserDto>();
-        userDto.ShouldNotBeNull();
-        userDto.Username.ShouldBe(user.UserName);
+    [Fact]
+    public async Task Users_ReturnUnauthorized()
+    {
+        using var _ = DbFixture.UseDb();
+
+        HttpResponseMessage[] responses = [
+            await Client.GetAsync(UserEndpoints.Prefix + "/search/anybody"),
+            await Client.GetAsync(UserEndpoints.Prefix + "/0c11e6e3-cf73-4314-82f9-0fe8d51cd082"),
+            ];
+
+        responses.ShouldAllBe(x => x.StatusCode == System.Net.HttpStatusCode.Unauthorized);
     }
 }
