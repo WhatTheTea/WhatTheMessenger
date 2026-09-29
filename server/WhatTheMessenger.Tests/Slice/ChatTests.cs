@@ -7,7 +7,7 @@ using WhatTheMessenger.Tests.Utils;
 
 namespace WhatTheMessenger.Tests.Slice;
 
-public sealed class ChatTests(SqliteFixture dbFixture) : IClassFixture<SqliteFixture> 
+public sealed class ChatTests(DbFixture dbFixture) : IClassFixture<DbFixture> 
 {
     private readonly IChatNotificationService chatNotificationService = Substitute.For<IChatNotificationService>();
 

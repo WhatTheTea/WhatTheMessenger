@@ -3,12 +3,12 @@ using WhatTheMessenger.Tests.Utils;
 
 namespace WhatTheMessenger.Tests;
 
-public abstract class ApiTestBase : IClassFixture<IDbFixture>
+public abstract class ApiTestBase : IClassFixture<DbFixture>
 {
-    protected readonly IDbFixture DbFixture;
+    protected readonly DbFixture DbFixture;
     protected readonly HttpClient Client;
 
-    protected ApiTestBase(IDbFixture dbFixture)
+    protected ApiTestBase(DbFixture dbFixture)
     {
         DbFixture = dbFixture;
         var factory = new ChatApiFactory(DbFixture);

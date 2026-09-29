@@ -9,14 +9,7 @@ public sealed class Disposable(Action dispose) : IDisposable
     public void Dispose() => dispose();
 }
 
-public interface IDbFixture
-{
-    void Dispose();
-    ApplicationDbContext GetDbContext();
-    IDisposable UseDb();
-}
-
-public sealed class SqliteFixture : IDisposable, IDbFixture
+public class DbFixture : IDisposable
 {
     private readonly SqliteConnection sqlite;
 
@@ -43,7 +36,7 @@ public sealed class SqliteFixture : IDisposable, IDbFixture
         });
     }
 
-    public SqliteFixture()
+    public DbFixture()
     {
         sqlite = new("Filename=:memory:");
         sqlite.Open();

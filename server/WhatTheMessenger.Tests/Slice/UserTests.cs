@@ -5,7 +5,7 @@ using WhatTheMessenger.Tests.Utils;
 
 namespace WhatTheMessenger.Tests.Slice;
 
-public class UserTests(SqliteFixture dbFixture) : IClassFixture<SqliteFixture> 
+public class UserTests(DbFixture dbFixture) : IClassFixture<DbFixture> 
 {
     [Fact]
     public async Task UsersFoundByDisplayName()

@@ -6,11 +6,13 @@ namespace WhatTheMessenger.Api.Features.Users;
 
 public static class AuthEndpoints
 {
+    public const string AuthEndpointPrefix = "/api/v1/auth";
+
     extension(WebApplication app)
     {
         public WebApplication MapAuthEndpoints()
         {
-            var group = app.MapGroup("/api/v1/auth");
+            var group = app.MapGroup(AuthEndpointPrefix);
 
             group.MapGet("/me", async (ClaimsPrincipal principal, UserManager<User> userManager) =>
                 {
@@ -30,10 +32,12 @@ public static class AuthEndpoints
             
             group.MapPost("/login", async (LoginModel login, SignInManager<User> signInManager) =>
             {
+                var user = signInManager.UserManager.FindByNameAsync(login.Login);
+
                 var result = await signInManager.PasswordSignInAsync(login.Login, login.Password, login.RememberMe, false);
-                return result.Succeeded ? Results.Ok() : Results.Unauthorized();
+                return result.Succeeded ? Results.Ok() : Results.BadRequest();
             }).Produces(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status401Unauthorized);;
+            .Produces(StatusCodes.Status400BadRequest);
 
             group.MapPost("/register", async (RegisterModel register, SignInManager<User> signInManager,
                 IUserStore<User> userStore, UserManager<User> userManager) =>

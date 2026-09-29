@@ -12,7 +12,7 @@ using WhatTheMessenger.Infrastructure.DataAccess;
 
 namespace WhatTheMessenger.Tests.Utils;
 
-public class ChatApiFactory(IDbFixture dbFixture) : WebApplicationFactory<Program>
+public class ChatApiFactory(DbFixture dbFixture) : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
