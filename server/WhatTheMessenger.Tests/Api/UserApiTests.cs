@@ -46,6 +46,25 @@ public class AuthApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
         response.Headers.Contains("Set-Cookie").ShouldBeTrue();
+    }
 
+    [Fact]
+    public async Task Me_ReturnsUserDto_WhenLoggedIn()
+    {
+        using var _ = DbFixture.UseDb();
+        using var dbContext = DbFixture.GetDbContext();
+        var userFactory = new UserFactory(dbContext);
+        var user = userFactory.Create("testuser");
+
+        // pretend user is signed in
+        Client.DefaultRequestHeaders.Add("X-Test-UserId", user.Id.ToString());
+
+        var response = await Client.GetAsync(AuthEndpoints.AuthEndpointPrefix + "/me");
+
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+
+        var userDto = await response.Content.ReadFromJsonAsync<UserDto>();
+        userDto.ShouldNotBeNull();
+        userDto.Username.ShouldBe(user.UserName);
     }
 }
