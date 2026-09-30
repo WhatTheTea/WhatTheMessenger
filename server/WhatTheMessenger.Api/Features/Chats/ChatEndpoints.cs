@@ -7,6 +7,8 @@ namespace WhatTheMessenger.Api.Features.Chats;
 
 public static class ChatEndpoints
 {
+    public const string Prefix = "/api/v1/chats";
+
     public static IServiceCollection AddChatHandlers(this IServiceCollection services) =>
         services.AddTransient<IHandler<CreateChat.Request, CreateChat.Response>, CreateChat.Handler>();
 
@@ -14,7 +16,7 @@ public static class ChatEndpoints
     {
         public WebApplication MapChatEndpoints()
         {
-            var group = app.MapGroup("/api/v1/chats");
+            var group = app.MapGroup(Prefix);
 
             group.MapGet("/user/me", async (ClaimsPrincipal claims, IAppDbContext dbContext) =>
             {

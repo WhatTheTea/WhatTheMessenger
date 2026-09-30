@@ -7,7 +7,7 @@ namespace WhatTheMessenger.Api.Features.Chats;
 
 public static class CreateChat
 {
-    public sealed record Request(string Name, IEnumerable<Guid> Participants);
+    public sealed record Request(string? Name, IEnumerable<Guid> Participants);
     public sealed record Response(Guid NewChatId);
 
     public sealed class Handler(IAppDbContext dbContext, IChatNotificationService notificationService) : IHandler<Request, Response>

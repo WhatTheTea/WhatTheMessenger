@@ -18,8 +18,7 @@ public class UserApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         var targetUser = userFactory.Create("search_target");
         var currentUser = userFactory.Create("current_user");
 
-        // pretend user is signed in
-        Client.DefaultRequestHeaders.Add("X-Test-UserId", currentUser.Id.ToString());
+        AuthenticateAs(currentUser.Id);
         var response = await Client.GetAsync(UserEndpoints.Prefix + $"/search/{targetUser.UserName}");
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
