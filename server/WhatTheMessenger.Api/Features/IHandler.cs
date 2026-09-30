@@ -1,3 +1,5 @@
+/// Using own handler interface is meant to prevent the indirection caused by Mediator-like frameworks 
+
 namespace WhatTheMessenger.Api.Features;
 
 public interface IHandler<in TRequest, TResponse>
