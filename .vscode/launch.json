@@ -1,0 +1,41 @@
+{
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "dotnet attach",
+      "type": "coreclr",
+      "request": "attach",
+      "processName": "WhatTheMessenger.Api",
+      "preLaunchTask": "dotnet: watch (single-process)"
+    },
+    {
+      "name": "ng serve",
+      "type": "firefox",
+      "request": "launch",
+      "preLaunchTask": "npm: start",
+      "url": "http://localhost:4200/"
+    },
+    {
+      "name": "ng test",
+      "type": "firefox",
+      "request": "launch",
+      "preLaunchTask": "npm: test",
+      "url": "http://localhost:9876/debug.html"
+    },
+    {
+      "name": "dotnet launch",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/server/WhatTheMessenger.Api/WhatTheMessenger.Api.csproj",
+      "launchSettingsProfile": "dev (single-process)"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "full-stack (local)",
+      "configurations": ["ng serve", "dotnet launch"],
+      "stopAll": true
+    }
+  ]
+}

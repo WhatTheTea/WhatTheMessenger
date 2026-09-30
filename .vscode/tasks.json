@@ -1,17 +1,83 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "shell",
-			"command": "docker-compose --profile infra --file ${workspaceFolder}/WhatTheMessenger.Server/Properties/docker-compose.yaml up",
-			"label": "docker: infra"
-		},
-		{
-			"type": "shell",
-			"command": "cd server && dotnet watch --project WhatTheMessenger.Api -lp 'dev (single-process)'",
-			"isBackground": true,
-			"problemMatcher": "$msCompile",
-			"label": "dotnet: watch (single-process)"
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "launch (singular)",
+      "dependsOn": [
+        "dotnet: watch (single-process)",
+        "npm: start"
+      ],
+      "isBackground": true,
+      "problemMatcher": [
+        "$msCompile",
+        "$tsc-watch"
+      ]
+    },
+    {
+      "type": "shell",
+      "command": "docker-compose --profile infra --file ${workspaceFolder}/WhatTheMessenger.Server/Properties/docker-compose.yaml up",
+      "label": "docker: infra"
+    },
+    {
+      // "type": "shell",
+      // "command": "cd server && dotnet watch --project WhatTheMessenger.Api -lp 'dev (single-process)'",
+      "command": "dotnet",
+      "args": [
+        "watch",
+        "--project",
+        "${workspaceFolder}/server/WhatTheMessenger.Api/WhatTheMessenger.Api.csproj",
+        "-lp",
+        "dev (single-process)"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "dotnet",
+        "pattern": "$msCompile",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "\\s*(Hot reload enabled|File updated)",
+          "endsPattern": "\\s*(Waiting for changes|No managed code changes to apply|changes applied)"
+        }
+      },
+      "label": "dotnet: watch (single-process)"
+    },
+    {
+      "label": "npm: start",
+      "type": "npm",
+      "script": "start",
+      "path": "client",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Changes detected"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation (complete|failed)"
+          }
+        }
+      }
+    },
+    {
+      "type": "npm",
+      "script": "test",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": "$tsc",
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": {
+            "regexp": "Changes detected"
+          },
+          "endsPattern": {
+            "regexp": "bundle generation (complete|failed)"
+          }
+        }
+      }
+    }
+  ]
 }
