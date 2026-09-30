@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.ResponseCompression;
-using WhatTheMessenger.Infrastructure.Services;
 using WhatTheMessenger.Api;
 using WhatTheMessenger.Api.Features.Users;
 using WhatTheMessenger.Api.Features.RPC;
