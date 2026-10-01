@@ -24,8 +24,8 @@ public class AuthApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         var response = await Client.PostAsJsonAsync(AuthEndpoints.AuthEndpointPrefix + "/register", request);
 
         response.IsSuccessStatusCode.ShouldBeTrue();
-        dbContext.Users.FirstOrDefault(x => x.NormalizedUserName == "TEST").ShouldNotBeNull();
-        response.Headers.Contains("Set-Cookie").ShouldBeTrue();
+        dbContext.Users.ShouldContain(x => x.NormalizedUserName == "TEST");
+        response.Headers.ShouldContain(x => x.Key == "Set-Cookie");
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class AuthApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         var response = await Client.PostAsJsonAsync(AuthEndpoints.AuthEndpointPrefix + "/login", request);
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
-        response.Headers.Contains("Set-Cookie").ShouldBeTrue();
+        response.Headers.ShouldContain(x => x.Key == "Set-Cookie");
     }
 
     [Fact]
@@ -56,8 +56,7 @@ public class AuthApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         var userFactory = new UserFactory(dbContext);
         var user = userFactory.Create("testuser");
 
-        // pretend user is signed in
-        Client.DefaultRequestHeaders.Add("X-Test-UserId", user.Id.ToString());
+        AuthenticateAs(user.Id);
 
         var response = await Client.GetAsync(AuthEndpoints.AuthEndpointPrefix + "/me");
 

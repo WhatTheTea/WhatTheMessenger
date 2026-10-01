@@ -46,7 +46,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         AuthenticateAs(user.Id);
         var response = await Client.GetAsync($"{ChatEndpoints.Prefix}/user/me/{chat.Id}");
 
-        response.EnsureSuccessStatusCode();
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
         var chatDto = await response.Content.ReadFromJsonAsync<ChatDto>();
         chatDto.ShouldNotBeNull();
         chatDto.ChatId.ShouldBe(chat.Id);

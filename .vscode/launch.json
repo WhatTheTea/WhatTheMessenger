@@ -3,13 +3,6 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "dotnet attach",
-      "type": "coreclr",
-      "request": "attach",
-      "processName": "WhatTheMessenger.Api",
-      "preLaunchTask": "dotnet: watch (single-process)"
-    },
-    {
       "name": "ng serve",
       "type": "firefox",
       "request": "launch",
