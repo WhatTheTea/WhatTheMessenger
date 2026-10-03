@@ -24,7 +24,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         AuthenticateAs(user.Id);
         var response = await Client.GetAsync($"{ChatEndpoints.Prefix}/user/me");
 
-        response.EnsureSuccessStatusCode();
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
         var chats = await response.Content.ReadFromJsonAsync<ChatDto[]>();
         chats.ShouldNotBeNull();
         chats.ShouldContain(c => c.ChatId == chat.Id);
@@ -68,5 +68,41 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         var response = await Client.PostAsJsonAsync($"{ChatEndpoints.Prefix}/create", request);
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Accepted);
+    }
+
+    [Fact]
+    public async Task GetChatById_ReturnsNotFound_WhenChatDoesNotExist()
+    {
+        using var _ = DbFixture.UseDb();
+        using var dbContext = DbFixture.GetDbContext();
+        var userFactory = new UserFactory(dbContext);
+        
+        var user = userFactory.Create("test_user");
+        var otherUser = userFactory.Create("other_user");
+        var chat = ChatFactory.Create(user, otherUser);
+        dbContext.Chats.Add(chat);
+        dbContext.SaveChanges();
+
+        AuthenticateAs(user.Id);
+        var response = await Client.GetAsync($"{ChatEndpoints.Prefix}/user/me/{Guid.NewGuid()}");
+
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task CreateChat_ReturnsUnauthorized_WhenUserIsNotAuthenticated()
+    {
+        using var _ = DbFixture.UseDb();
+        using var dbContext = DbFixture.GetDbContext();
+        var userFactory = new UserFactory(dbContext);
+        
+        var user = userFactory.Create("current_user");
+        var targetUser = userFactory.Create("target_user");
+
+        var request = new CreateChat.Request(null, [targetUser.Id, user.Id]);
+        
+        var response = await Client.PostAsJsonAsync($"{ChatEndpoints.Prefix}/create", request);
+
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
     }
 }
