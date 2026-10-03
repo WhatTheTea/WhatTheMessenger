@@ -9,6 +9,8 @@ public interface IChatHub
     public Task MessageReceived(MessageDto message);
 
     public Task ChatCreated(ChatDto chat);
+
+    public Task UserLeft(Guid chatId, Guid userId);
 }
 
 [Authorize]

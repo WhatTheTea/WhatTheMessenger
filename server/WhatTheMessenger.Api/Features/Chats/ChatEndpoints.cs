@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WhatTheMessenger.Api.Features.Shared;
 using WhatTheMessenger.Infrastructure.DataAccess;
@@ -10,13 +11,16 @@ public static class ChatEndpoints
     public const string Prefix = "/api/v1/chats";
 
     public static IServiceCollection AddChatHandlers(this IServiceCollection services) =>
-        services.AddTransient<IHandler<CreateChat.Request, CreateChat.Response>, CreateChat.Handler>();
+        services.AddTransient<IHandler<CreateChat.Request, CreateChat.Response>, CreateChat.Handler>()
+            .AddTransient<IHandler<LeaveChat.Request, Nothing>, LeaveChat.Handler>();
 
     extension(WebApplication app)
     {
         public WebApplication MapChatEndpoints()
         {
-            var group = app.MapGroup(Prefix);
+            var group = app.MapGroup(Prefix)
+                .RequireAuthorization()
+                .ProducesProblem(StatusCodes.Status401Unauthorized);
 
             group.MapGet("/user/me", async (ClaimsPrincipal claims, IAppDbContext dbContext) =>
             {
@@ -30,8 +34,7 @@ public static class ChatEndpoints
                 return Results.Ok(chats ?? []);
             })
             .RequireAuthorization()
-            .Produces<ChatDto[]>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status401Unauthorized);
+            .Produces<ChatDto[]>(StatusCodes.Status200OK);
 
 
             group.MapGet("/user/me/{id:guid}", async (Guid id, ClaimsPrincipal claims, IAppDbContext dbContext) =>
@@ -48,8 +51,27 @@ public static class ChatEndpoints
             })
             .RequireAuthorization()
             .Produces<ChatDto>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status404NotFound)
-            .Produces(StatusCodes.Status401Unauthorized);
+            .Produces(StatusCodes.Status404NotFound);
+
+            group.MapDelete("/user/me/{id:guid}", async (Guid id, ClaimsPrincipal claims, IHandler<LeaveChat.Request, Nothing> handler) =>
+            {
+                var userId = claims.GetUserId();
+
+                try
+                {
+                    await handler.HandleAsync(new LeaveChat.Request(id, userId));   
+                }
+                catch (LeaveChat.ChatNotFoundException)
+                {
+                    return Results.NotFound();
+                }
+
+                return Results.Ok();
+            })
+            .Produces(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
+
+
 
             group.MapPost("/create", async (CreateChat.Request request, IHandler<CreateChat.Request, CreateChat.Response> handler) =>
                 {
@@ -58,8 +80,7 @@ public static class ChatEndpoints
                 })
                 .RequireAuthorization()
                 .Accepts(typeof(CreateChat.Request), System.Net.Mime.MediaTypeNames.Application.Json)
-                .Produces(StatusCodes.Status202Accepted)
-                .Produces(StatusCodes.Status401Unauthorized);
+                .Produces(StatusCodes.Status202Accepted);
             return app;
         }
     }

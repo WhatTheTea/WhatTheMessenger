@@ -105,4 +105,61 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
     }
+
+     [Fact]
+    public async Task LeaveChat_WhenChatExists_ReturnsOk()
+    {
+        using var _ = DbFixture.UseDb();
+        using var dbContext = DbFixture.GetDbContext();
+        var userFactory = new UserFactory(dbContext);
+        
+        var user = userFactory.Create("test_user");
+        var otherUser = userFactory.Create("other_user");
+        var chat = ChatFactory.Create(user, otherUser);
+        dbContext.Chats.Add(chat);
+        dbContext.SaveChanges();
+
+        AuthenticateAs(user.Id);
+        var response = await Client.DeleteAsync($"{ChatEndpoints.Prefix}/user/me/{chat.Id}");
+
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
+        dbContext.Chats.Where(x => x.Users.Any(x => x.Id == user.Id)).ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task LeaveChat_WhenChatDoesNotExist_ReturnsNotFound()
+    {
+        using var _ = DbFixture.UseDb();
+        using var dbContext = DbFixture.GetDbContext();
+        var userFactory = new UserFactory(dbContext);
+        
+        var user = userFactory.Create("test_user");
+        var otherUser = userFactory.Create("other_user");
+        var chat = ChatFactory.Create(user, otherUser);
+        dbContext.Chats.Add(chat);
+        dbContext.SaveChanges();
+
+        AuthenticateAs(user.Id);
+        var response = await Client.DeleteAsync($"{ChatEndpoints.Prefix}/user/me/{Guid.NewGuid()}");
+
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task LeaveChat_WhenUserIsNotAuthenticated_ReturnsUnauthorized()
+    {
+        using var _ = DbFixture.UseDb();
+        using var dbContext = DbFixture.GetDbContext();
+        var userFactory = new UserFactory(dbContext);
+        
+        var user = userFactory.Create("test_user");
+        var otherUser = userFactory.Create("other_user");
+        var chat = ChatFactory.Create(user, otherUser);
+        dbContext.Chats.Add(chat);
+        dbContext.SaveChanges();
+
+        var response = await Client.DeleteAsync($"{ChatEndpoints.Prefix}/user/me/{chat.Id}");
+
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
+    }
 }
