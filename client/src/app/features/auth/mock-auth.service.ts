@@ -1,25 +1,24 @@
 import { Observable, of } from 'rxjs';
-import { LoginDTO, RegisterDTO } from '../../core/models';
 import { AuthService} from './auth.service';
 import { Injectable, signal } from '@angular/core';
 import { guid } from '../../primitives';
+import { LoginDTO } from './login/login.dto';
+import { RegisterDTO } from './register/register.dto';
+import { User } from './user';
 
-interface _User {
-  id: guid;
-  name: string;
-  nickname: string;
+interface MockUser extends User {
   password: string;
 }
 
 @Injectable()
 export class MockAuthService extends AuthService {
-  private _users: Map<guid, _User> = new Map<guid, _User>();
-  currentUser = signal<guid | null>(null);
+  private _users: Map<guid, MockUser> = new Map<guid, MockUser>();
+  currentUser = signal<User | null>(null);
 
   login(dto: LoginDTO): Observable<void> {
     let user = this._users.get(dto.login);
     if (user?.password === dto.password) {
-      this.currentUser.set(user.id);
+      this.currentUser.set(user);
     }
 
     return of(void 0);
@@ -31,21 +30,21 @@ export class MockAuthService extends AuthService {
     return of(void 0);
   }
 
-  fetchCurrentUser(): Observable<guid | null> {
+  fetchCurrentUser(): Observable<User | null> {
     return of(this.currentUser());
   }
 
   register(dto: RegisterDTO): Observable<void> {
-    let user: _User = {
+    let user: MockUser = {
       id: dto.login,
-      name: dto.login,
-      nickname: dto.nickname,
+      username: dto.login,
+      displayName: dto.nickname,
       password: dto.password,
     };
 
     this._users.set(dto.login, user);
 
-    this.currentUser.set(user.id);
+    this.currentUser.set(user);
 
     return of(void 0);
   }

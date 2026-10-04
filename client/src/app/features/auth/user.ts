@@ -4,5 +4,4 @@ export interface User {
   id: guid;
   username: string;
   displayName: string;
-  chatIds: guid[];
 }

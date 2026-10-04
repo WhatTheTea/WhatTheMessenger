@@ -1,14 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { concatMap, map, Observable, tap } from 'rxjs';
-import { LoginDTO, RegisterDTO, User } from '../../core/models';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments';
-import { guid } from '../../primitives';
+import { LoginDTO } from './login/login.dto';
+import { User } from './user';
+import { RegisterDTO } from './register/register.dto';
 
 @Injectable()
 export class CookieAuthService extends AuthService {
-  private _currentUser = signal<guid | null>(null);
+  private _currentUser = signal<User | null>(null);
   currentUser = this._currentUser.asReadonly();
 
   constructor(private http: HttpClient) {
@@ -27,12 +28,11 @@ export class CookieAuthService extends AuthService {
       .pipe(tap((_) => this._currentUser.set(null)));
   }
 
-  fetchCurrentUser(): Observable<guid> {
+  fetchCurrentUser(): Observable<User> {
     return this.http
       .get<User>(`${environment.authApi}/me`, {
         withCredentials: true,
       })
-      .pipe(map((user) => user.id))
       .pipe(tap((user) => this._currentUser.set(user)));
   }
 
