@@ -26,6 +26,11 @@ public static class LeaveChat
 
             var participants = chat.Users.Select(x => x.Id.ToString());
 
+            if (chat.Users.Count <= 1)
+            {
+                dbContext.Chats.Remove(chat);
+            }
+
             chat.Users.Remove(user);
             await dbContext.SaveChangesAsync(ct);
             await hub.Clients.Users(participants).UserLeft(chatId, userId);

@@ -106,7 +106,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
     }
 
-     [Fact]
+    [Fact]
     public async Task LeaveChat_WhenChatExists_ReturnsOk()
     {
         using var _ = DbFixture.UseDb();

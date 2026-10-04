@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using Microsoft.AspNetCore.SignalR;
+using NSubstitute;
 using Shouldly;
 using WhatTheMessenger.Api.Features.Chats;
 using WhatTheMessenger.Api.Features.RPC;
@@ -43,5 +44,43 @@ public sealed class ChatTests(DbFixture dbFixture) : IClassFixture<DbFixture>
 
         dbContext.Chats.Find(chatId).ShouldNotBeNull();
         dbContext.Chats.Find(chatId)?.Name.ShouldBe($"test, test");
+    }
+
+
+    [Fact]
+    public async Task LeaveChat_WhenChatDoesNotExist_ThrowsNotFound()
+    {
+        using var _ = dbFixture.UseDb();
+        using var dbContext = dbFixture.GetDbContext();
+        using var arrangeContext = dbFixture.GetDbContext();
+        var userFactory = new UserFactory(dbContext);
+        
+        var user = userFactory.Create("test_user");
+        var otherUser = userFactory.Create("other_user");
+        var chat = ChatFactory.Create(user, otherUser);
+        dbContext.Chats.Add(chat);
+        dbContext.SaveChanges();
+
+        var leaveChatHandler = new LeaveChat.Handler(dbContext, Substitute.For<IHubContext<ChatHub, IChatHub>>());
+        var response = await leaveChatHandler.HandleAsync(new(Guid.NewGuid(), user.Id))
+            .ShouldThrowAsync<LeaveChat.ChatNotFoundException>();
+    }
+
+    [Fact]
+    public async Task LeaveChat_WhenChatHasNoUsers_ShouldDeleteChat()
+    {
+        using var _ = dbFixture.UseDb();
+        using var dbContext = dbFixture.GetDbContext();
+        var userFactory = new UserFactory(dbContext);
+
+        var user = userFactory.Create("test_user");
+        var chat = ChatFactory.Create(user);
+        dbContext.Chats.Add(chat);
+        dbContext.SaveChanges();
+
+        var leaveChatHandler = new LeaveChat.Handler(dbContext, Substitute.For<IHubContext<ChatHub, IChatHub>>());
+        var response = await leaveChatHandler.HandleAsync(new(chat.Id, user.Id));
+
+        dbContext.Chats.ShouldNotContain(x => x.Users.Any());
     }
 }
