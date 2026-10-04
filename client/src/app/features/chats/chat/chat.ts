@@ -1,5 +1,4 @@
 import { Component, inject, input } from '@angular/core';
-import { ChatService } from '../../../core';
 
 @Component({
   selector: 'app-chat',

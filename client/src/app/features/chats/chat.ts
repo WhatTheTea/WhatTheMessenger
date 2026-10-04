@@ -1,6 +1,6 @@
 import { guid } from '../../primitives';
+import { User } from '../users/user';
 import { Message } from './message';
-import { User } from '../auth/user';
 
 export interface Chat {
     id: guid;

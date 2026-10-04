@@ -2,7 +2,7 @@ import { computed, Injectable, Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LoginDTO } from './login/login.dto';
 import { RegisterDTO } from './register/register.dto';
-import { User } from './user';
+import { User } from '../users/user';
 
 @Injectable()
 export abstract class AuthService {

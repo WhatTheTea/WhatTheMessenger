@@ -4,7 +4,7 @@ import { Injectable, signal } from '@angular/core';
 import { guid } from '../../primitives';
 import { LoginDTO } from './login/login.dto';
 import { RegisterDTO } from './register/register.dto';
-import { User } from './user';
+import { User } from '../users/user';
 
 interface MockUser extends User {
   password: string;

@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CreateChat } from './models/createChat';
 import { forkJoin, map, Observable, of, tap } from 'rxjs';
-import { Chat } from './models/chat';
-import { Message } from './models/message';
+import { Chat, CreateChat, Message } from '.';
+import { guid } from '../../primitives';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments';
-import { guid } from '../primitives';
-import { UserService } from './user.service';
+import { environment } from '../../../environments';
+import { UserService } from '../users/user.service';
 
 @Injectable()
 export abstract class ChatService {
@@ -39,7 +37,7 @@ export class MockChatService extends ChatService {
       }),
     );
   }
-  
+
   override getChatsForUser(userId: string): Observable<Chat[]> {
     return of(
       Array.from(this.chats.values()).filter((chat) =>

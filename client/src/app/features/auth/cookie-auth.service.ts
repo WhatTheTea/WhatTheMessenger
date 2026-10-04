@@ -4,7 +4,7 @@ import { concatMap, map, Observable, tap } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments';
 import { LoginDTO } from './login/login.dto';
-import { User } from './user';
+import { User } from '../users/user';
 import { RegisterDTO } from './register/register.dto';
 
 @Injectable()
