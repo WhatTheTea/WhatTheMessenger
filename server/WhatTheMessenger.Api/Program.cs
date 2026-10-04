@@ -83,7 +83,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.MapHub<ChatHub>("/hubs/v1/chat");
 
 app.Run();

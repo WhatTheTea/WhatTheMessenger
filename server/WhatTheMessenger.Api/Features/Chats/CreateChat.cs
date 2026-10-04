@@ -19,7 +19,9 @@ public static class CreateChat
             var users = await dbContext.Users.Where(x => participants.Contains(x.Id)).ToListAsync(ct);
             var chat = new Chat()
             {
-                Name = chatName ?? string.Join(", ", users.Select(x => x.DisplayName)),
+                Name = string.IsNullOrWhiteSpace(chatName) 
+                    ? string.Join(", ", users.Select(x => x.DisplayName))
+                    : chatName,
                 Users = users
             };
             dbContext.Chats.Add(chat);

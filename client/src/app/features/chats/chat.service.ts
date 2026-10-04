@@ -66,7 +66,7 @@ export class DatabaseChatService extends ChatService {
   }
 
   override getChat(id: guid): Observable<Chat | null> {
-    return this.http.get<Chat | null>(environment.chatApi + '/' + id, {
+    return this.http.get<Chat | null>(environment.chatApi + '/user/me/' + id, {
       withCredentials: true,
     });
   }

@@ -30,6 +30,20 @@ export class ChatList {
   userChats = signal<Chat[]>([]);
 
   constructor() {
+    this.chatService.getChatsForUser().subscribe((chats) => {
+      this.userChats.set(chats);
+    });
+
+    this.realtimeService.addChatCreatedListener((chat) => {
+      this.chatService
+        .getChat(chat.id)
+        .pipe(filter((x) => x != null))
+        .subscribe((chat) => { 
+          this.userChats.update((chats) => [...chats, chat]);
+          this.router.navigate(['chats', chat.id]);
+        });
+    });
+
     effect(() => {
       if (!this.authService.isAuthenticated()) {
         this.router.navigate(['/']);
@@ -41,16 +55,6 @@ export class ChatList {
       this.realtimeService.start();
     });
 
-    this.chatService.getChatsForUser().subscribe((chats) => {
-      this.userChats.set(chats);
-    });
-
-    this.realtimeService.addChatCreatedListener((chat) => {
-      this.chatService
-        .getChat(chat.chatId)
-        .pipe(filter((x) => x != null))
-        .subscribe((chat) => this.userChats.update((chats) => [...chats, chat]));
-    });
   }
 
   logout() {

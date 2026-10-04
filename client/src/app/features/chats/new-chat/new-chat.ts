@@ -15,13 +15,13 @@ import { ChatService } from '../chat.service';
 export class NewChat implements OnInit {
   private userService = inject(UserService);
   private chatService = inject(ChatService);
-  
+
   creatorId = input.required<guid>();
   created = output();
 
   // Group containing form controls
   newChatForm = new FormGroup({
-    name: new FormControl('', {nonNullable: true}),
+    name: new FormControl('', { nonNullable: true }),
     query: new FormControl('', { nonNullable: true }),
   });
 
@@ -44,17 +44,7 @@ export class NewChat implements OnInit {
           }
         }),
         filter((query) => query.trim().length > 0),
-        switchMap((query) =>
-          this.userService.findUsers(query).pipe(
-            switchMap((userGuids) => {
-              if (userGuids.length === 0) {
-                return of([]);
-              }
-              const requests = userGuids.map((id) => this.userService.fetchUserInfo(id));
-              return forkJoin(requests);
-            })
-          )
-        )
+        switchMap((query) => this.userService.findUsers(query)),
       )
       .subscribe({
         next: (users) => {
@@ -72,13 +62,12 @@ export class NewChat implements OnInit {
   onFormSubmit(): void {
     const data = this.newChatForm.value;
     if (this.newChatForm.valid) {
-      this.chatService.createChat(
-        {
+      this.chatService
+        .createChat({
           name: data.name ?? '',
-          participants: [...this.selectedUsers().map(x => x.id as guid), this.creatorId()]
-        }
-      )
-      .subscribe(_ => this.created.emit());
+          participants: [...this.selectedUsers().map((x) => x.id as guid), this.creatorId()],
+        })
+        .subscribe((_) => this.created.emit());
     }
   }
 

@@ -19,7 +19,7 @@ public static class UserEndpoints
 
             group.MapGet("/search/{query}", async (string query, IHandler<GetUsers.Request, GetUsers.Response> handler) 
                 => await handler.HandleAsync(new(query)))
-                .Produces<UserDto[]>(StatusCodes.Status200OK)
+                .Produces<GetUsers.Response>(StatusCodes.Status200OK)
                 .Produces(StatusCodes.Status401Unauthorized);
 
             group.MapGet("/{id:guid}", async (Guid id, IAppDbContext dbContext) =>

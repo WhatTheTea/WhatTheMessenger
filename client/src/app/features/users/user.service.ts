@@ -8,7 +8,7 @@ import { environment } from '../../../environments';
 @Injectable()
 export abstract class UserService {
   abstract fetchUserInfo(userId: guid): Observable<User>;
-  abstract findUsers(query: string): Observable<guid[]>;
+  abstract findUsers(query: string): Observable<User[]>;
 }
 
 @Injectable()
@@ -31,11 +31,10 @@ export class MockUserService extends UserService {
     });
   }
 
-  override findUsers(query: string): Observable<guid[]> {
+  override findUsers(query: string): Observable<User[]> {
     return of(
       Array.from(this.users.values())
-        .filter((x) => x.displayName.match(query) || x.username.match(query))
-        .map((x) => x.id),
+        .filter((x) => x.displayName.match(query) || x.username.match(query)),
     );
   }
 }
@@ -51,11 +50,11 @@ export class DatabaseUserService extends UserService {
       withCredentials: true,
     });
   }
-  override findUsers(query: string): Observable<guid[]> {
+  override findUsers(query: string): Observable<User[]> {
     return this.http
-      .get<guid[]>(`${environment.userApi}/search/${query}`, {
+      .get<{ users: User[], count: number}>(`${environment.userApi}/search/${query}`, {
         withCredentials: true,
       })
-      .pipe(map((x) => x ?? []));
+      .pipe(map((x) => x?.users ?? []));
   }
 }

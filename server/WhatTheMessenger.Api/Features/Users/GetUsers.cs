@@ -6,7 +6,7 @@ namespace WhatTheMessenger.Api.Features.Users;
 public static class GetUsers
 {
     public sealed record Request(string Query);
-    public sealed record Response(IEnumerable<UserDto> Users);
+    public sealed record Response(IEnumerable<UserDto> Users, int count);
 
     public sealed class Handler(IAppDbContext dbContext) : IHandler<Request, Response>
     {
@@ -14,12 +14,13 @@ public static class GetUsers
         {
             var query = request.Query;
 
-            var users = dbContext.Users.AsNoTracking()
+            var users = await dbContext.Users.AsNoTracking()
                 .Where(u => u.UserName!.Contains(query) ||
                             u.DisplayName!.Contains(query))
-                .Select(x => UserDto.From(x));
+                .Select(x => UserDto.From(x))
+                .ToListAsync(ct);
 
-            return new Response(await users.ToListAsync(ct));
+            return new Response(users, users.Count);
         }
     }
 }
