@@ -1,6 +1,6 @@
 import { computed, Injectable, Signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginDTO, RegisterDTO } from '../models';
+import { LoginDTO, RegisterDTO } from '../../core/models';
 import { guid } from '../../primitives';
 
 @Injectable()

@@ -2,18 +2,6 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "launch (singular)",
-      "dependsOn": [
-        "dotnet: watch (single-process)",
-        "npm: start"
-      ],
-      "isBackground": true,
-      "problemMatcher": [
-        "$msCompile",
-        "$tsc-watch"
-      ]
-    },
-    {
       "type": "shell",
       "command": "docker-compose --profile infra --file ${workspaceFolder}/WhatTheMessenger.Server/Properties/docker-compose.yaml up",
       "label": "docker: infra"

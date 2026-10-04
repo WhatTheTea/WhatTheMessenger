@@ -1,8 +1,8 @@
 import { Component, effect, inject, input, signal } from '@angular/core';
-import { AuthService } from '../../core/auth';
+import { AuthService } from '../auth';
 import { Router, RouterLinkActive, RouterLinkWithHref } from '@angular/router';
 import { ChatService, RealTimeService, UserService } from '../../core';
-import { Chat } from '../../core/models/chat';
+import { Chat } from './chat';
 import { Chat as ChatComponent } from './chat/chat';
 import { NbDialog } from '../../components/nb-dialog/nb-dialog';
 import { NewChat } from './new-chat/new-chat';

@@ -8,7 +8,7 @@ import {
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { catchError, of } from 'rxjs';
 
-import { AuthService, CookieAuthService, MockAuthService } from './core/auth';
+import { AuthService, CookieAuthService, MockAuthService } from './features/auth';
 import { ChatService, DatabaseChatService, DatabaseUserService, MockChatService, MockRealtimeService, MockUserService, RealTimeService, SignalRService, UserService } from './core';
 import { routes } from './app.routes';
 import { environment } from '../environments';

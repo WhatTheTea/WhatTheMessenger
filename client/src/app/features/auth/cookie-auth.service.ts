@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { concatMap, map, Observable, tap } from 'rxjs';
-import { LoginDTO, RegisterDTO, User } from '../models';
+import { LoginDTO, RegisterDTO, User } from '../../core/models';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments';
 import { guid } from '../../primitives';
