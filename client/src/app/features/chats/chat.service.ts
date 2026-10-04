@@ -9,7 +9,7 @@ import { UserService } from '../users/user.service';
 @Injectable()
 export abstract class ChatService {
   abstract createChat(chat: CreateChat): Observable<void>;
-  abstract getChatsForUser(userId: string): Observable<Chat[]>;
+  abstract getChatsForUser(): Observable<Chat[]>;
   abstract getChat(id: guid): Observable<Chat | null>;
 }
 
@@ -38,11 +38,9 @@ export class MockChatService extends ChatService {
     );
   }
 
-  override getChatsForUser(userId: string): Observable<Chat[]> {
+  override getChatsForUser(): Observable<Chat[]> {
     return of(
-      Array.from(this.chats.values()).filter((chat) =>
-        chat.users.find((user) => user.id == userId),
-      ),
+      Array.from(this.chats.values()),
     );
   }
 
@@ -61,8 +59,8 @@ export class DatabaseChatService extends ChatService {
     return this.http.post<void>(environment.chatApi + '/create', chat, { withCredentials: true });
   }
 
-  override getChatsForUser(userId: string): Observable<Chat[]> {
-    return this.http.get<Chat[]>(environment.chatApi + '/user/' + userId, {
+  override getChatsForUser(): Observable<Chat[]> {
+    return this.http.get<Chat[]>(environment.chatApi + '/user/me', {
       withCredentials: true,
     });
   }

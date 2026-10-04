@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HubConnectionBuilder } from '@microsoft/signalr';
-import { environment } from '../../environments';
-import { IncomingMessage } from './models/message';
-import { IncomingChat } from './models/incomingChat';
+import { IncomingChat, IncomingMessage } from '../chats';
+import { environment } from '../../../environments';
 
 @Injectable()
 export abstract class RealTimeService {
@@ -15,7 +14,7 @@ export abstract class RealTimeService {
 @Injectable()
 export class SignalRService extends RealTimeService {
   private connection = new HubConnectionBuilder()
-    .withUrl(environment.signalR)
+    .withUrl(environment.signalR, {withCredentials: true})
     .withAutomaticReconnect()
     .build();
 

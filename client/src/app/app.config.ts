@@ -9,9 +9,11 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { catchError, of } from 'rxjs';
 
 import { AuthService, CookieAuthService, MockAuthService } from './features/auth';
-import { ChatService, DatabaseChatService, DatabaseUserService, MockChatService, MockRealtimeService, MockUserService, RealTimeService, SignalRService, UserService } from './core';
 import { routes } from './app.routes';
 import { environment } from '../environments';
+import { ChatService, MockChatService, DatabaseChatService } from './features/chats';
+import { RealTimeService, MockRealtimeService, SignalRService } from './features/rpc/realtime.service';
+import { UserService, MockUserService, DatabaseUserService } from './features/users/user.service';
 
 function provideServices(): Provider[] {
   if (environment.useMocks) {

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
-import { concatMap, map, Observable, tap } from 'rxjs';
+import { concatMap, filter, map, Observable, tap } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments';
 import { LoginDTO } from './login/login.dto';
@@ -33,7 +33,10 @@ export class CookieAuthService extends AuthService {
       .get<User>(`${environment.authApi}/me`, {
         withCredentials: true,
       })
-      .pipe(tap((user) => this._currentUser.set(user)));
+      .pipe(
+        filter((user) => !!user),
+        tap((user) => this._currentUser.set(user))
+      );
   }
 
   register(dto: RegisterDTO): Observable<void> {

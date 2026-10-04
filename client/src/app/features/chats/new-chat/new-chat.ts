@@ -1,9 +1,10 @@
 import { Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { User } from '../../../core/models';
-import { ChatService, UserService } from '../../../core';
 import { debounceTime, distinctUntilChanged, filter, forkJoin, of, switchMap, tap } from 'rxjs';
 import { guid } from '../../../primitives';
+import { User } from '../../users/user';
+import { UserService } from '../../users/user.service';
+import { ChatService } from '../chat.service';
 
 @Component({
   selector: 'app-new-chat',

@@ -44,7 +44,7 @@ public static class ChatEndpoints
                 var result = await dbContext.Chats.AsNoTracking()
                     .GetChatsForUser(userId)
                     .Select(ChatDto.FromEntity)
-                    .SingleOrDefaultAsync(chat => chat.ChatId == id);
+                    .SingleOrDefaultAsync(chat => chat.Id == id);
 
                 return result is not null ? Results.Ok(result)
                     : Results.NotFound();

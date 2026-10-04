@@ -7,7 +7,17 @@
       "type": "firefox",
       "request": "launch",
       "preLaunchTask": "npm: start",
-      "url": "http://localhost:4200/"
+      "url": "http://localhost:4200/",
+      "pathMappings": [
+        {
+          "url": "http://localhost:4200/src",
+          "path": "${workspaceFolder}/client/src"
+        },
+        {
+          "url": "http://localhost:4200/@fs",
+          "path": ""
+        }
+      ]
     },
     {
       "name": "ng test",

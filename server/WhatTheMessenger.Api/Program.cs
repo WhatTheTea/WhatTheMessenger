@@ -8,6 +8,18 @@ using WhatTheMessenger.Api.Features.Chats;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSignalR();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("DevCors", policy =>
+    {
+         policy.SetIsOriginAllowed(origin => new Uri(origin).Host is "localhost")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+    
+    //TODO: Configure production CORS
+});
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -38,6 +50,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseCors("DevCors");
     app.UseMigrationsEndPoint();
     if (app.Configuration.GetValue<bool>("single-process"))
         app.EnsureDatabase();
@@ -48,7 +61,10 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseAntiforgery();
 
 app
@@ -61,12 +77,12 @@ if (app.Environment.IsProduction())
 {
     app.UseResponseCompression();
 }
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.MapHub<ChatHub>("/hubs/v1/chat");
 

@@ -27,7 +27,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
         var chats = await response.Content.ReadFromJsonAsync<ChatDto[]>();
         chats.ShouldNotBeNull();
-        chats.ShouldContain(c => c.ChatId == chat.Id);
+        chats.ShouldContain(c => c.Id == chat.Id);
     }
 
     [Fact]
@@ -49,7 +49,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
         var chatDto = await response.Content.ReadFromJsonAsync<ChatDto>();
         chatDto.ShouldNotBeNull();
-        chatDto.ChatId.ShouldBe(chat.Id);
+        chatDto.Id.ShouldBe(chat.Id);
     }
 
     [Fact]

@@ -2,10 +2,10 @@ import { Component, effect, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthService } from '../auth';
-import { Login } from '../../components/login/login';
-import { Register } from '../../components/register/register';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { Login } from '../auth/login/login';
+import { Register } from '../auth/register/register';
 
 @Component({
   selector: 'app-home',
