@@ -19,7 +19,7 @@ public static class CreateChat
             var users = await dbContext.Users.Where(x => participants.Contains(x.Id)).ToListAsync(ct);
             var chat = new Chat()
             {
-                Name = string.IsNullOrWhiteSpace(chatName) 
+                Name = string.IsNullOrWhiteSpace(chatName)
                     ? string.Join(", ", users.Select(x => x.DisplayName))
                     : chatName,
                 Users = users
@@ -33,4 +33,7 @@ public static class CreateChat
             return new(chat.Id);
         }
     }
+
+    public static IServiceCollection AddCreateChat(this IServiceCollection services) =>
+        services.AddTransient<IHandler<Request, Response>, Handler>();
 }

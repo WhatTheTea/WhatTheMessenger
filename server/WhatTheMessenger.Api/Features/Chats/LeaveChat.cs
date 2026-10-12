@@ -38,4 +38,6 @@ public static class LeaveChat
             return Nothing.Default;
         }
     }
+
+    public static IServiceCollection AddLeaveChat(this IServiceCollection services) => services.AddTransient<IHandler<Request, Nothing>, Handler>();
 }

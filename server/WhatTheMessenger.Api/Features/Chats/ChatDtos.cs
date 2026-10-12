@@ -37,7 +37,7 @@ public sealed record ChatDto
         {
             Name = chat.Name ?? string.Empty,
             // TODO: Check if it maps correctly to SQL
-            Messages = chat.Messages.Select(x => new MessageDto()
+            Messages = chat.Messages.TakeLast(10).Select(x => new MessageDto()
             {
                 ChatId = x.ChatId,
                 Content = x.Content,

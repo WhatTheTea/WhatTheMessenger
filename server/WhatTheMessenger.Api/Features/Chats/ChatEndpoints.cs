@@ -11,8 +11,10 @@ public static class ChatEndpoints
     public const string Prefix = "/api/v1/chats";
 
     public static IServiceCollection AddChatHandlers(this IServiceCollection services) =>
-        services.AddTransient<IHandler<CreateChat.Request, CreateChat.Response>, CreateChat.Handler>()
-            .AddTransient<IHandler<LeaveChat.Request, Nothing>, LeaveChat.Handler>();
+        services
+            .AddCreateChat()
+            .AddLeaveChat()
+            .AddGetMessages();
 
     extension(WebApplication app)
     {
