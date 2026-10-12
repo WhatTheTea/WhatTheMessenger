@@ -4,7 +4,7 @@ namespace WhatTheMessenger.Core;
 
 public sealed class Chat
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = Guid.CreateVersion7();
     public string? Name { get; set; }
     public required List<User> Users { get; set; }
     public List<Message> Messages { get; set; } = [];
