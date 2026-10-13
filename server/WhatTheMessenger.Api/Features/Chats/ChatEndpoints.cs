@@ -24,7 +24,7 @@ public static class ChatEndpoints
                 .RequireAuthorization()
                 .ProducesProblem(StatusCodes.Status401Unauthorized);
 
-            group.MapGet("/user/me", async (ClaimsPrincipal claims, IAppDbContext dbContext) =>
+            group.MapGet("/", async (ClaimsPrincipal claims, IAppDbContext dbContext) =>
             {
                 var userId = claims.GetUserId();
 
@@ -39,7 +39,7 @@ public static class ChatEndpoints
             .Produces<ChatDto[]>(StatusCodes.Status200OK);
 
 
-            group.MapGet("/user/me/{id:guid}", async (Guid id, ClaimsPrincipal claims, IAppDbContext dbContext) =>
+            group.MapGet("/{id:guid}", async (Guid id, ClaimsPrincipal claims, IAppDbContext dbContext) =>
             {
                 var userId = claims.GetUserId();
 
@@ -55,13 +55,13 @@ public static class ChatEndpoints
             .Produces<ChatDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
 
-            group.MapDelete("/user/me/{id:guid}", async (Guid id, ClaimsPrincipal claims, IHandler<LeaveChat.Request, Nothing> handler) =>
+            group.MapDelete("/{id:guid}", async (Guid id, ClaimsPrincipal claims, IHandler<LeaveChat.Request, Nothing> handler) =>
             {
                 var userId = claims.GetUserId();
 
                 try
                 {
-                    await handler.HandleAsync(new LeaveChat.Request(id, userId));   
+                    await handler.HandleAsync(new LeaveChat.Request(id, userId));
                 }
                 catch (LeaveChat.ChatNotFoundException)
                 {
@@ -83,6 +83,8 @@ public static class ChatEndpoints
                 .RequireAuthorization()
                 .Accepts(typeof(CreateChat.Request), System.Net.Mime.MediaTypeNames.Application.Json)
                 .Produces(StatusCodes.Status202Accepted);
+
+
             return app;
         }
     }

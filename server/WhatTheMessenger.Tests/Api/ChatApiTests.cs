@@ -22,7 +22,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         dbContext.SaveChanges();
 
         AuthenticateAs(user.Id);
-        var response = await Client.GetAsync($"{ChatEndpoints.Prefix}/user/me");
+        var response = await Client.GetAsync($"{ChatEndpoints.Prefix}");
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
         var chats = await response.Content.ReadFromJsonAsync<ChatDto[]>();
@@ -44,7 +44,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         dbContext.SaveChanges();
 
         AuthenticateAs(user.Id);
-        var response = await Client.GetAsync($"{ChatEndpoints.Prefix}/user/me/{chat.Id}");
+        var response = await Client.GetAsync($"{ChatEndpoints.Prefix}/{chat.Id}");
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
         var chatDto = await response.Content.ReadFromJsonAsync<ChatDto>();
@@ -84,7 +84,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         dbContext.SaveChanges();
 
         AuthenticateAs(user.Id);
-        var response = await Client.GetAsync($"{ChatEndpoints.Prefix}/user/me/{Guid.NewGuid()}");
+        var response = await Client.GetAsync($"{ChatEndpoints.Prefix}/{Guid.NewGuid()}");
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
     }
@@ -120,7 +120,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         dbContext.SaveChanges();
 
         AuthenticateAs(user.Id);
-        var response = await Client.DeleteAsync($"{ChatEndpoints.Prefix}/user/me/{chat.Id}");
+        var response = await Client.DeleteAsync($"{ChatEndpoints.Prefix}/{chat.Id}");
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
         dbContext.Chats.Where(x => x.Users.Any(x => x.Id == user.Id)).ShouldBeEmpty();
@@ -140,7 +140,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         dbContext.SaveChanges();
 
         AuthenticateAs(user.Id);
-        var response = await Client.DeleteAsync($"{ChatEndpoints.Prefix}/user/me/{Guid.NewGuid()}");
+        var response = await Client.DeleteAsync($"{ChatEndpoints.Prefix}/{Guid.NewGuid()}");
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
     }
@@ -158,7 +158,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         dbContext.Chats.Add(chat);
         dbContext.SaveChanges();
 
-        var response = await Client.DeleteAsync($"{ChatEndpoints.Prefix}/user/me/{chat.Id}");
+        var response = await Client.DeleteAsync($"{ChatEndpoints.Prefix}/{chat.Id}");
 
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
     }
