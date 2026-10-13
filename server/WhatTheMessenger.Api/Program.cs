@@ -12,12 +12,12 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("DevCors", policy =>
     {
-         policy.SetIsOriginAllowed(origin => new Uri(origin).Host is "localhost")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy.SetIsOriginAllowed(origin => new Uri(origin).Host is "localhost")
+             .AllowAnyHeader()
+             .AllowAnyMethod()
+             .AllowCredentials();
     });
-    
+
     //TODO: Configure production CORS
 });
 builder.Services.AddResponseCompression(opts =>
@@ -43,7 +43,16 @@ builder.Services
     ;
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.CustomSchemaIds(type =>
+ {
+     // Outputs "GetUsersResponse" or "GetUsers.Response"
+     return type.IsNested && type.DeclaringType != null
+         ? $"{type.DeclaringType.Name}.{type.Name}"
+         : type.Name;
+ });
+});
 
 var app = builder.Build();
 

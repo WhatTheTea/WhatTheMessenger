@@ -6,12 +6,18 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments';
 import { UserService } from '../users/user.service';
 
+interface Messages {
+  messages : Message[],
+  count: number,
+  lastMessageId: guid | null
+}
+
 @Injectable()
 export abstract class ChatService {
   abstract createChat(chat: CreateChat): Observable<void>;
   abstract getChatsForUser(): Observable<Chat[]>;
-  abstract getChat(id: guid): Observable<Chat?>;
-  abstract getMessagesForChat(id: guid, count : number, lastMessageId: guid?): 
+  abstract getChat(id: guid): Observable<Chat | null>;
+  abstract getMessagesForChat(id: guid, count : number, lastMessageId: guid | null): Observable<Messages> 
 }
 
 @Injectable()
@@ -22,8 +28,9 @@ export class MockChatService extends ChatService {
     super();
   }
 
-  override getMessagesForChat(id: guid, count: number, lastMessageId: guid | null) {
-    return this.chats.get(id)?.messages;
+  override getMessagesForChat(id: guid, count: number, lastMessageId: guid | null): Observable<Messages>  {
+    const messages = this.chats.get(id)?.messages;
+    return of({ messages: messages, count: messages?.length, lastMessageId: null } as Messages);
   }
   
   override createChat(chat: CreateChat): Observable<void> {
@@ -60,12 +67,12 @@ export class DatabaseChatService extends ChatService {
     super();
   }
 
-  override getMessagesForChat(id: guid, count: number?, lastMessageId: guid?) {
-    return this.http.get(
+  override getMessagesForChat(id: guid, count: number | null, lastMessageId: guid | null): Observable<Messages>  {
+    return this.http.get<Messages>(
       environment.chatApi 
       + `/${id}/` 
       + `?count=${count ?? 20}` 
-      + lastMessageId ? `&lastMessageId=${lastMessageId}` : '');
+      + (lastMessageId ? `&lastMessageId=${lastMessageId}` : ''), {withCredentials: true});
   }
 
   override createChat(chat: CreateChat): Observable<void> {

@@ -1,1 +1,5 @@
-<p>chat works!</p>
+@for (message of messages(); track message?.id) {
+    <p>
+        {{ message?.content }}
+    </p>
+}
