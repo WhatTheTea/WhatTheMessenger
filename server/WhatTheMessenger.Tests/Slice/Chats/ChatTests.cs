@@ -55,7 +55,7 @@ public sealed class ChatTests(DbFixture dbFixture) : IClassFixture<DbFixture>
         var userFactory = new UserFactory(dbContext);
 
         var user = userFactory.Create("test_user");
-        var chat = ChatFactory.Create(user);
+        var chat = ChatFactory.New(user);
         dbContext.Chats.Add(chat);
         dbContext.SaveChanges();
 

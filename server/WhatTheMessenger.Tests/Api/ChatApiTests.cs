@@ -17,7 +17,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         
         var user = userFactory.Create("test_user");
         var otherUser = userFactory.Create("other_user");
-        var chat = ChatFactory.Create(user, otherUser);
+        var chat = ChatFactory.New(user, otherUser);
         dbContext.Chats.Add(chat);
         dbContext.SaveChanges();
 
@@ -39,7 +39,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         
         var user = userFactory.Create("test_user");
         var otherUser = userFactory.Create("other_user");
-        var chat = ChatFactory.Create(user, otherUser);
+        var chat = ChatFactory.New(user, otherUser);
         dbContext.Chats.Add(chat);
         dbContext.SaveChanges();
 
@@ -79,7 +79,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         
         var user = userFactory.Create("test_user");
         var otherUser = userFactory.Create("other_user");
-        var chat = ChatFactory.Create(user, otherUser);
+        var chat = ChatFactory.New(user, otherUser);
         dbContext.Chats.Add(chat);
         dbContext.SaveChanges();
 
@@ -115,7 +115,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         
         var user = userFactory.Create("test_user");
         var otherUser = userFactory.Create("other_user");
-        var chat = ChatFactory.Create(user, otherUser);
+        var chat = ChatFactory.New(user, otherUser);
         dbContext.Chats.Add(chat);
         dbContext.SaveChanges();
 
@@ -135,7 +135,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         
         var user = userFactory.Create("test_user");
         var otherUser = userFactory.Create("other_user");
-        var chat = ChatFactory.Create(user, otherUser);
+        var chat = ChatFactory.New(user, otherUser);
         dbContext.Chats.Add(chat);
         dbContext.SaveChanges();
 
@@ -154,7 +154,7 @@ public class ChatApiTests(DbFixture dbFixture) : ApiTestBase(dbFixture)
         
         var user = userFactory.Create("test_user");
         var otherUser = userFactory.Create("other_user");
-        var chat = ChatFactory.Create(user, otherUser);
+        var chat = ChatFactory.New(user, otherUser);
         dbContext.Chats.Add(chat);
         dbContext.SaveChanges();
 
