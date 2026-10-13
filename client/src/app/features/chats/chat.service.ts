@@ -10,17 +10,22 @@ import { UserService } from '../users/user.service';
 export abstract class ChatService {
   abstract createChat(chat: CreateChat): Observable<void>;
   abstract getChatsForUser(): Observable<Chat[]>;
-  abstract getChat(id: guid): Observable<Chat | null>;
+  abstract getChat(id: guid): Observable<Chat?>;
+  abstract getMessagesForChat(id: guid, count : number, lastMessageId: guid?): 
 }
 
 @Injectable()
 export class MockChatService extends ChatService {
   private chats: Map<guid, Chat> = new Map<guid, Chat>();
-
+  
   constructor(private userService: UserService) {
     super();
   }
 
+  override getMessagesForChat(id: guid, count: number, lastMessageId: guid | null) {
+    return this.chats.get(id)?.messages;
+  }
+  
   override createChat(chat: CreateChat): Observable<void> {
     const chatId: guid = this.chats.size.toString();
 
@@ -53,6 +58,14 @@ export class MockChatService extends ChatService {
 export class DatabaseChatService extends ChatService {
   constructor(private http: HttpClient) {
     super();
+  }
+
+  override getMessagesForChat(id: guid, count: number?, lastMessageId: guid?) {
+    return this.http.get(
+      environment.chatApi 
+      + `/${id}/` 
+      + `?count=${count ?? 20}` 
+      + lastMessageId ? `&lastMessageId=${lastMessageId}` : '');
   }
 
   override createChat(chat: CreateChat): Observable<void> {

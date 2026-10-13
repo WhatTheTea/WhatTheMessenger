@@ -5,8 +5,6 @@ namespace WhatTheMessenger.Api.Features.Chats;
 
 public static class GetMessages
 {
-    public const int AllMessages = 0;
-
     public sealed record Request(Guid UserId, Guid ChatId, int Count = 20, Guid? BeforeMessageId = null);
 
     public sealed record Response(IEnumerable<MessageDto> Messages, int Count, Guid? LastMessageId);
