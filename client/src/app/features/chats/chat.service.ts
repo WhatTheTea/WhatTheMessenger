@@ -60,13 +60,13 @@ export class DatabaseChatService extends ChatService {
   }
 
   override getChatsForUser(): Observable<Chat[]> {
-    return this.http.get<Chat[]>(environment.chatApi + '/user/me', {
+    return this.http.get<Chat[]>(environment.chatApi, {
       withCredentials: true,
     });
   }
 
   override getChat(id: guid): Observable<Chat | null> {
-    return this.http.get<Chat | null>(environment.chatApi + '/user/me/' + id, {
+    return this.http.get<Chat | null>(environment.chatApi + '/' + id, {
       withCredentials: true,
     });
   }

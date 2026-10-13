@@ -35,7 +35,6 @@ public static class ChatEndpoints
 
                 return Results.Ok(chats ?? []);
             })
-            .RequireAuthorization()
             .Produces<ChatDto[]>(StatusCodes.Status200OK);
 
 
@@ -51,7 +50,6 @@ public static class ChatEndpoints
                 return result is not null ? Results.Ok(result)
                     : Results.NotFound();
             })
-            .RequireAuthorization()
             .Produces<ChatDto>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status404NotFound);
 
@@ -84,6 +82,16 @@ public static class ChatEndpoints
                 .Accepts(typeof(CreateChat.Request), System.Net.Mime.MediaTypeNames.Application.Json)
                 .Produces(StatusCodes.Status202Accepted);
 
+            group.MapGet("/{chatId:guid}/messages", async (
+                Guid chatId,
+                [FromQuery] int count,
+                [FromQuery] Guid? lastMessageId,
+                ClaimsPrincipal claims,
+                IHandler<GetMessages.Request, GetMessages.Response> handler) =>
+
+                await handler.HandleAsync(new(claims.GetUserId(), chatId, count, lastMessageId))
+            )
+            .Produces<GetMessages.Response>();
 
             return app;
         }
