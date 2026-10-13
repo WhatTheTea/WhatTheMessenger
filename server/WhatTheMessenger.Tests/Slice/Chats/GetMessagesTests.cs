@@ -5,20 +5,17 @@ using WhatTheMessenger.Tests.Utils;
 
 namespace WhatTheMessenger.Tests.Slice.Chats;
 
-public sealed class GetMessagesTests : IClassFixture<DbFixture>, IDisposable
+public sealed class GetMessagesTests(DbFixture dbFixture) : IClassFixture<DbFixture>, IDisposable
 {
-    private readonly DbFixture dbFixture;
-    private readonly IDisposable db;
-    private readonly ApplicationDbContext dbContext;
-    private readonly ApplicationDbContext handlerDbContext;
+    private readonly IDisposable db = dbFixture.UseDb();
+    private readonly ApplicationDbContext dbContext = dbFixture.GetDbContext();
+    private readonly ApplicationDbContext handlerDbContext = dbFixture.GetDbContext();
 
-    public GetMessagesTests(DbFixture dbFixture)
+    private Task SendMessage(Core.User user1, Core.Chat chat, int i)
     {
-        this.dbFixture = dbFixture;
-        db = dbFixture.UseDb();
-        dbContext = dbFixture.GetDbContext();
-        handlerDbContext = dbFixture.GetDbContext();
-
+        var message1 = chat.SendMessage(user1.Id, $"test {i}");
+        dbContext.Messages.Add(message1);
+        return Task.Delay(1); // Add delay in order for Guid v7 to work correctly 
     }
 
     public void Dispose()
@@ -38,10 +35,9 @@ public sealed class GetMessagesTests : IClassFixture<DbFixture>, IDisposable
         var user = userFactory.Create("test_user");
         var chat = chatFactory.Create(user);
 
-        for (int i = 0; i < 45; i++)
+        for (int i = 45; i > 0; i--)
         {
-            var message = chat.SendMessage(user.Id, $"test {i}");
-            dbContext.Messages.Add(message);
+            await SendMessage(user, chat, i);
         }
         dbContext.SaveChanges();
 
@@ -63,23 +59,22 @@ public sealed class GetMessagesTests : IClassFixture<DbFixture>, IDisposable
         var user2 = userFactory.Create("test_user2");
         var chat = chatFactory.Create(user1, user2);
 
-        for (int i = 0; i < 60; i++)
+        for (int i = 60; i > 0; i--)
         {
-            var message1 = chat.SendMessage(user1.Id, $"test {i}");
-            dbContext.Messages.Add(message1);
+            await SendMessage(user1, chat, i);
         }
         dbContext.SaveChanges();
 
         var firstPage = await handler.HandleAsync(new(user1.Id, chat.Id));
         firstPage.LastMessageId.ShouldNotBeNull();
         firstPage.Count.ShouldNotBe(0);
-        firstPage.Messages.ShouldNotContain(x => x.Content.Contains("20"));
+        firstPage.Messages.ShouldNotContain(x => x.Content.Contains("21"));
 
         var secondPage = await handler.HandleAsync(new(user1.Id, chat.Id, 20, firstPage.LastMessageId));
         secondPage.LastMessageId.ShouldNotBeNull();
         secondPage.Count.ShouldNotBe(0);
-        secondPage.Messages.ShouldNotContain(x => x.Content.Contains("40"));
-        secondPage.Messages.ShouldContain(x => x.Content.Contains("20"));
+        secondPage.Messages.ShouldNotContain(x => x.Content.Contains("41"));
+        secondPage.Messages.ShouldContain(x => x.Content.Contains("21"));
         secondPage.Messages.ShouldNotContain(x => x.Id == firstPage.LastMessageId);
     }
 
@@ -95,8 +90,7 @@ public sealed class GetMessagesTests : IClassFixture<DbFixture>, IDisposable
 
         for (int i = 0; i < 10; i++)
         {
-            var message1 = chat.SendMessage(user1.Id, $"test {i}");
-            dbContext.Messages.Add(message1);
+            await SendMessage(user1, chat, i);
         }
         dbContext.SaveChanges();
 
@@ -123,7 +117,7 @@ public sealed class GetMessagesTests : IClassFixture<DbFixture>, IDisposable
 
         for (int i = 0; i < 20; i++)
         {
-            dbContext.Messages.Add(chat.SendMessage(user1.Id, $"test {i}"));
+             await SendMessage(user1, chat, i);
         }
         dbContext.SaveChanges();
 
