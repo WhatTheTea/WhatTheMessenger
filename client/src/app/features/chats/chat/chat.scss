@@ -1,0 +1,7 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Stretches to fill .main-content */
+  width: 100%;
+  overflow: hidden; /* Prevents outer scrollbar */
+}

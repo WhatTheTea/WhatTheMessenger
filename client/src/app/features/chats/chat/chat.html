@@ -1,12 +1,26 @@
-
-@if (messages().length < 1) 
-{
+<div #scrollContainer class="flex overflow-y-auto flex-1 flex-col">
+  @if (messages().length < 1) {
     <p>Chat is empty</p>
-}
-@else {
+  } @else {
     @for (message of messages(); track message?.id) {
-        <p>
-            {{ message?.content }}
-        </p>
+      <p>
+        <b> {{ message?.senderName }}: </b>
+
+        {{ message?.content }}
+      </p>
     }
-}
+  }
+</div>
+
+<form [formGroup]="messageForm" (ngSubmit)="onSendMessage()" class="mt-auto shrink-0">
+  <input
+    class="nb-input default m-2"
+    type="text"
+    formControlName="message"
+    placeholder="Type a message..."
+    autocomplete="off"
+  />
+  <button class="nb-input orange m-2" type="submit" [disabled]="!messageForm.value.message?.trim()">
+    Send
+  </button>
+</form>

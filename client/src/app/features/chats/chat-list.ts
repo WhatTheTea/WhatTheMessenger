@@ -6,7 +6,7 @@ import { Chat as ChatComponent } from './chat/chat';
 import { NbDialog } from '../../components/nb-dialog/nb-dialog';
 import { NewChat } from './new-chat/new-chat';
 import { guid } from '../../primitives';
-import { filter } from 'rxjs';
+import { concat, filter, flatMap, map, mergeMap } from 'rxjs';
 import { RealTimeService } from '../rpc/realtime.service';
 import { UserService } from '../users/user.service';
 import { ChatService } from './chat.service';
@@ -34,15 +34,16 @@ export class ChatList {
       this.userChats.set(chats);
     });
 
-    this.realtimeService.addChatCreatedListener((chat) => {
-      this.chatService
-        .getChat(chat.id)
-        .pipe(filter((x) => x != null))
-        .subscribe((chat) => { 
-          this.userChats.update((chats) => [...chats, chat]);
-          this.router.navigate(['chats', chat.id]);
-        });
-    });
+    this.realtimeService
+      .whenChatCreated()
+      .pipe(
+        mergeMap((chat) => this.chatService.getChat(chat.id)),
+        filter((x) => x != null),
+      )
+      .subscribe((chat) => {
+        this.userChats.update((chats) => [...chats, chat]);
+        this.router.navigate(['chats', chat.id]);
+      });
 
     effect(() => {
       if (!this.authService.isAuthenticated()) {
@@ -54,7 +55,6 @@ export class ChatList {
       this.userDisplayName.set(user.displayName ?? null);
       this.realtimeService.start();
     });
-
   }
 
   logout() {
