@@ -60,6 +60,10 @@
   </div>
 </aside>
 
+<app-nb-dialog #newChatDialog title="New chat">
+    <app-new-chat [creatorId]="userId()" (created)="newChatDialog.close()"></app-new-chat>
+</app-nb-dialog>
+
 <!-- MAIN -->
 <main class="main-content">
   @if (id()) {
@@ -69,6 +73,4 @@
   }
 </main>
 
-<app-nb-dialog #newChatDialog title="New chat">
-    <app-new-chat [creatorId]="userId()" (created)="newChatDialog.close()"></app-new-chat>
-</app-nb-dialog>
+

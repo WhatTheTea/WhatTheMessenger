@@ -32,9 +32,7 @@ public static class AuthEndpoints
             
             group.MapPost("/login", async (LoginModel login, SignInManager<User> signInManager) =>
             {
-                var user = signInManager.UserManager.FindByNameAsync(login.Login);
-
-                var result = await signInManager.PasswordSignInAsync(login.Login, login.Password, login.RememberMe, false);
+                var result = await signInManager.PasswordSignInAsync(login.Login.ToLower(), login.Password, login.RememberMe, false);
                 return result.Succeeded ? Results.Ok() : Results.BadRequest();
             }).Produces(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status400BadRequest);
