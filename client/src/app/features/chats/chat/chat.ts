@@ -16,7 +16,7 @@ export class Chat implements OnInit {
   constructor(){
      effect(() => {
       this.chatService.getMessagesForChat(this.chatId(), 40, null)
-      .subscribe(x => this.messages.set(x.messages));
+      .subscribe(x => this.messages.set(x.messages.filter(x => x)));
     })
   }
 
