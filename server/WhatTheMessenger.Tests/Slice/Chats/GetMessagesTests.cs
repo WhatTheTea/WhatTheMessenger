@@ -11,6 +11,9 @@ public sealed class GetMessagesTests(DbFixture dbFixture) : IClassFixture<DbFixt
     private readonly ApplicationDbContext dbContext = dbFixture.GetDbContext();
     private readonly ApplicationDbContext handlerDbContext = dbFixture.GetDbContext();
 
+    private readonly UserFactory userFactory = new(dbFixture.GetDbContext());
+    private readonly ChatFactory chatFactory = new(dbFixture.GetDbContext());
+
     private Task SendMessage(Core.User user1, Core.Chat chat, int i)
     {
         var message1 = chat.SendMessage(user1.Id, $"test {i}");
@@ -29,9 +32,6 @@ public sealed class GetMessagesTests(DbFixture dbFixture) : IClassFixture<DbFixt
     public async Task FirstPage_IsNotEmpty()
     {
         var handler = new GetMessages.Handler(handlerDbContext);
-        var userFactory = new UserFactory(dbContext);
-        var chatFactory = new ChatFactory(dbContext);
-
         var user = userFactory.Create("test_user");
         var chat = chatFactory.Create(user);
 
@@ -52,9 +52,6 @@ public sealed class GetMessagesTests(DbFixture dbFixture) : IClassFixture<DbFixt
     public async Task NextPage_IsNotEmpty()
     {
         var handler = new GetMessages.Handler(handlerDbContext);
-        var userFactory = new UserFactory(dbContext);
-        var chatFactory = new ChatFactory(dbContext);
-
         var user1 = userFactory.Create("test_user1");
         var user2 = userFactory.Create("test_user2");
         var chat = chatFactory.Create(user1, user2);
@@ -82,9 +79,6 @@ public sealed class GetMessagesTests(DbFixture dbFixture) : IClassFixture<DbFixt
     public async Task WhenEndOfData_IsEmpty()
     {
         var handler = new GetMessages.Handler(handlerDbContext);
-        var userFactory = new UserFactory(dbContext);
-        var chatFactory = new ChatFactory(dbContext);
-
         var user1 = userFactory.Create("test_user1");
         var chat = chatFactory.Create(user1);
 
@@ -108,9 +102,6 @@ public sealed class GetMessagesTests(DbFixture dbFixture) : IClassFixture<DbFixt
     public async Task WhenNonMember_IsEmpty()
     {
         var handler = new GetMessages.Handler(handlerDbContext);
-        var userFactory = new UserFactory(dbContext);
-        var chatFactory = new ChatFactory(dbContext);
-
         var user1 = userFactory.Create("test_user1");
         var user2 = userFactory.Create("test_user2");
         var chat = chatFactory.Create(user1);
@@ -125,4 +116,24 @@ public sealed class GetMessagesTests(DbFixture dbFixture) : IClassFixture<DbFixt
         result.Count.ShouldBe(0);
         result.Messages.ShouldBeEmpty();
     }
+
+    [Fact]
+    public async Task RequestForNegativeCount_HandlesGracefully()
+    {
+        var handler = new GetMessages.Handler(handlerDbContext);
+        var user = userFactory.Create("test_user");
+        var chat = chatFactory.Create(user);
+
+        for (int i = 0; i < 5; i++)
+        {
+            await SendMessage(user, chat, i);
+        }
+        dbContext.SaveChanges();
+
+        var result = await handler.HandleAsync(new(user.Id, chat.Id, Count: -5));
+
+        result.Count.ShouldBeGreaterThanOrEqualTo(0);
+        result.Messages.ShouldBeEmpty();
+    }
 }
+

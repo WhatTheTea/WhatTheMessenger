@@ -84,12 +84,12 @@ public static class ChatEndpoints
 
             group.MapGet("/{chatId:guid}/messages", async (
                 Guid chatId,
-                [FromQuery] int count,
+                [FromQuery] int? count,
                 [FromQuery] Guid? lastMessageId,
                 ClaimsPrincipal claims,
                 IHandler<GetMessages.Request, GetMessages.Response> handler) =>
 
-                await handler.HandleAsync(new(claims.GetUserId(), chatId, count, lastMessageId))
+                await handler.HandleAsync(new(claims.GetUserId(), chatId, count ?? GetMessages.DefaultCount, lastMessageId))
             )
             .Produces<GetMessages.Response>();
 
