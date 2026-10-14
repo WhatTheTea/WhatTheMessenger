@@ -7,4 +7,5 @@ export const environment: AppConfig = {
   chatApi: '',
   userApi: '',
   signalR: '',
+  messagesApi: ''
 };

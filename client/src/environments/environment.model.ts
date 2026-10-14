@@ -7,4 +7,5 @@ export interface AppConfig {
   chatApi: string;
   userApi: string;
   authApi: string;
+  messagesApi: string;
 }

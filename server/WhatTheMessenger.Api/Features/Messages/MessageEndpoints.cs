@@ -16,7 +16,7 @@ public static class MessageEndpoints
                 .RequireAuthorization()
                 .ProducesProblem(StatusCodes.Status401Unauthorized);
 
-            group.MapPost("/create", async (SendMessage.Request request, IHandler<SendMessage.Request, SendMessage.Response> handler) =>
+            group.MapPost("/send", async (SendMessage.Request request, IHandler<SendMessage.Request, SendMessage.Response> handler) =>
                 {
                     var result = await handler.HandleAsync(request);
 

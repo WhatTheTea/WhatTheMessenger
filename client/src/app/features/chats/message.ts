@@ -4,16 +4,10 @@ export interface Message {
   id: guid;
   chatId: guid;
   senderId: guid;
+  senderName: string;
   content: string;
   sentAt: Date;
   status: MessageStatus;
-}
-
-export interface IncomingMessage {
-  chatId: guid;
-  senderId: guid;
-  content: string;
-  senderName: string;
 }
 
 export enum MessageStatus {

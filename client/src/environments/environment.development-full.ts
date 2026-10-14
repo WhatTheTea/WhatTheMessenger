@@ -7,4 +7,5 @@ export const environment: AppConfig = {
   chatApi: 'http://localhost:5185/api/v1/chats',
   userApi: 'http://localhost:5185/api/v1/users',
   signalR: 'http://localhost:5185/hubs/v1/chat',
+  messagesApi: 'http://localhost:5185/api/v1/messages'
 };

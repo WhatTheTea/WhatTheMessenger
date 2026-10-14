@@ -5,6 +5,7 @@ import { guid } from '../../primitives';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments';
 import { UserService } from '../users/user.service';
+import { SendMessage } from './sendMessage';
 
 interface Messages {
   messages : Message[],
@@ -18,6 +19,7 @@ export abstract class ChatService {
   abstract getChatsForUser(): Observable<Chat[]>;
   abstract getChat(id: guid): Observable<Chat | null>;
   abstract getMessagesForChat(id: guid, count : number, lastMessageId: guid | null): Observable<Messages> 
+  abstract sendMessage(message: SendMessage): Observable<void>;
 }
 
 @Injectable()
@@ -26,6 +28,11 @@ export class MockChatService extends ChatService {
   
   constructor(private userService: UserService) {
     super();
+  }
+
+  override sendMessage(message: SendMessage): Observable<void> {
+    throw new Error('Not implemented');
+    return of(void 0);
   }
 
   override getMessagesForChat(id: guid, count: number, lastMessageId: guid | null): Observable<Messages>  {
@@ -70,7 +77,7 @@ export class DatabaseChatService extends ChatService {
   override getMessagesForChat(id: guid, count: number | null, lastMessageId: guid | null): Observable<Messages>  {
     return this.http.get<Messages>(
       environment.chatApi 
-      + `/${id}/` 
+      + `/${id}/messages` 
       + `?count=${count ?? 20}` 
       + (lastMessageId ? `&lastMessageId=${lastMessageId}` : ''), {withCredentials: true});
   }
@@ -89,5 +96,9 @@ export class DatabaseChatService extends ChatService {
     return this.http.get<Chat | null>(environment.chatApi + '/' + id, {
       withCredentials: true,
     });
+  }
+
+  override sendMessage(message: SendMessage): Observable<void> {
+    return this.http.post<void>(environment.messagesApi + '/send', message, { withCredentials: true});
   }
 }
