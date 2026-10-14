@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using WhatTheMessenger.Api.Features.Chats;
+using WhatTheMessenger.Api.Features.Messages;
 
 namespace WhatTheMessenger.Api.Features.RPC;
 

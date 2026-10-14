@@ -1,36 +1,8 @@
-using System;
-using System.Linq;
-
-using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using WhatTheMessenger.Core;
+using WhatTheMessenger.Api.Features.Messages;
 
 namespace WhatTheMessenger.Api.Features.Chats;
-
-public sealed record NewMessageModel
-{
-    [StringLength(int.MaxValue, MinimumLength = 1)]
-    public required string Content { get; set; } = string.Empty;
-}
-
-public sealed record MessageDto
-{
-    public static Expression<Func<Message, MessageDto>> FromEntity =>
-        message => new()
-        {
-            Id = message.Id,
-            Content = message.Content,
-            ChatId = message.ChatId,
-            SenderId = message.SenderId,
-            SenderName = message.Sender.DisplayName
-        };
-
-    public required Guid Id { get; set; }
-    public required string Content { get; set; }
-    public required Guid ChatId { get; set; }
-    public required Guid SenderId { get; set; }
-    public required string SenderName { get; set; }
-}
 
 public sealed record ChatDto
 {
@@ -38,7 +10,6 @@ public sealed record ChatDto
         chat => new()
         {
             Name = chat.Name ?? string.Empty,
-            // TODO: Check if it maps correctly to SQL
             Messages = new List<MessageDto>()
             {
                 chat.Messages.OrderByDescending(x => x.Id)

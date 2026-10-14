@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WhatTheMessenger.Infrastructure.DataAccess;
 
-namespace WhatTheMessenger.Api.Features.Chats;
+namespace WhatTheMessenger.Api.Features.Messages;
 
 public static class GetMessages
 {

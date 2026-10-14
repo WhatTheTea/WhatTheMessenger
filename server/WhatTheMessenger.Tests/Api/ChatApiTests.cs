@@ -2,6 +2,7 @@ using System;
 using System.Net.Http.Json;
 using Shouldly;
 using WhatTheMessenger.Api.Features.Chats;
+using WhatTheMessenger.Api.Features.Messages;
 using WhatTheMessenger.Core;
 using WhatTheMessenger.Tests.Utils;
 

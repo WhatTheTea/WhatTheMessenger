@@ -4,6 +4,7 @@ using WhatTheMessenger.Api;
 using WhatTheMessenger.Api.Features.Users;
 using WhatTheMessenger.Api.Features.RPC;
 using WhatTheMessenger.Api.Features.Chats;
+using WhatTheMessenger.Api.Features.Messages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +41,7 @@ builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationS
 builder.Services
     .AddUserHandlers()
     .AddChatHandlers()
+    .AddMessageHandlers()
     ;
 
 builder.Services.AddEndpointsApiExplorer();
@@ -80,6 +82,7 @@ app
     .MapAuthEndpoints()
     .MapChatEndpoints()
     .MapUserEndpoints()
+    .MapMessageEndpoints()
     ;
 
 if (app.Environment.IsProduction())

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 using WhatTheMessenger.Api.Features.Chats;
+using WhatTheMessenger.Api.Features.Messages;
 using WhatTheMessenger.Core;
 
 namespace WhatTheMessenger.Api.Features.RPC;

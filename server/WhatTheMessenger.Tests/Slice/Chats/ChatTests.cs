@@ -6,7 +6,7 @@ using WhatTheMessenger.Api.Features.RPC;
 using WhatTheMessenger.Core;
 using WhatTheMessenger.Tests.Utils;
 
-namespace WhatTheMessenger.Tests.Slice;
+namespace WhatTheMessenger.Tests.Slice.Chats;
 
 public sealed class ChatTests(DbFixture dbFixture) : IClassFixture<DbFixture> 
 {
@@ -53,10 +53,10 @@ public sealed class ChatTests(DbFixture dbFixture) : IClassFixture<DbFixture>
         using var _ = dbFixture.UseDb();
         using var dbContext = dbFixture.GetDbContext();
         var userFactory = new UserFactory(dbContext);
+        var chatFactory = new ChatFactory(dbContext);
 
         var user = userFactory.Create("test_user");
-        var chat = ChatFactory.New(user);
-        dbContext.Chats.Add(chat);
+        var chat = chatFactory.Create(user);
         dbContext.SaveChanges();
 
         var leaveChatHandler = new LeaveChat.Handler(dbContext, Substitute.For<IHubContext<ChatHub, IChatHub>>());

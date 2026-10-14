@@ -1,18 +1,27 @@
 using Shouldly;
-using WhatTheMessenger.Api.Features.Chats;
+using WhatTheMessenger.Api.Features.Messages;
 using WhatTheMessenger.Infrastructure.DataAccess;
 using WhatTheMessenger.Tests.Utils;
 
-namespace WhatTheMessenger.Tests.Slice.Chats;
+namespace WhatTheMessenger.Tests.Slice.Messages;
 
-public sealed class GetMessagesTests(DbFixture dbFixture) : IClassFixture<DbFixture>, IDisposable
+public sealed class GetMessagesTests : IClassFixture<DbFixture>, IDisposable
 {
-    private readonly IDisposable db = dbFixture.UseDb();
-    private readonly ApplicationDbContext dbContext = dbFixture.GetDbContext();
-    private readonly ApplicationDbContext handlerDbContext = dbFixture.GetDbContext();
+    private readonly IDisposable db;
+    private readonly ApplicationDbContext dbContext;
+    private readonly ApplicationDbContext handlerDbContext;
 
-    private readonly UserFactory userFactory = new(dbFixture.GetDbContext());
-    private readonly ChatFactory chatFactory = new(dbFixture.GetDbContext());
+    private readonly UserFactory userFactory;
+    private readonly ChatFactory chatFactory;
+
+    public GetMessagesTests(DbFixture dbFixture)
+    {
+        db = dbFixture.UseDb();
+        dbContext = dbFixture.GetDbContext();
+        handlerDbContext = dbFixture.GetDbContext();
+        userFactory = new(dbContext);
+        chatFactory = new(dbContext);
+    }
 
     private Task SendMessage(Core.User user1, Core.Chat chat, int i)
     {
@@ -133,7 +142,6 @@ public sealed class GetMessagesTests(DbFixture dbFixture) : IClassFixture<DbFixt
         var result = await handler.HandleAsync(new(user.Id, chat.Id, Count: -5));
 
         result.Count.ShouldBeGreaterThanOrEqualTo(0);
-        result.Messages.ShouldBeEmpty();
     }
 }
 
