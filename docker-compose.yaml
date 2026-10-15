@@ -1,54 +1,62 @@
 name: what-the-messenger
 
-x-connection-string: &db-conn "Host=wtm-db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+x-connection-string: &db-conn "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
 x-dotnet-env: &dotnet-env
   ConnectionStrings__PostgresConnection: *db-conn
 
 services:
-  wtm-client:
-    build: ./client
+  gateway:
+    image: nginx:alpine
     ports:
       - ${CLIENT_PORT}:80
     depends_on:
-      - wtm-api
+      - api
+      - client
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    profiles:
+     - deploy
+
+
+  client:
+    build: ./client
+    depends_on:
+      - api
     profiles:
       - deploy
 
-  wtm-api:
+  api:
     build: ./server
     environment:
       <<: *dotnet-env
-    ports:
-      - ${API_PORT}:8080
     depends_on:
-      wtm-migration:
+      migration:
         condition: service_completed_successfully
-      wtm-db:
+      db:
         condition: service_healthy
     profiles:
       - deploy
 
-  wtm-migration:
+  # Short lived migration container to create the database and run migrations
+  migration:
     build: ./server
     entrypoint: ["/app/efbundle", "--connection", *db-conn]
     environment:
       <<: *dotnet-env
     depends_on:
-      wtm-db:
+      db:
         condition: service_healthy
     profiles:
       - deploy
 
-  wtm-db:
+  db:
     image: postgres:18
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "${POSTGRES_PORT}:5432"
     volumes:
-      - wtm-db-data:/var/lib/postgresql/data/18
+      - db-data:/var/lib/postgresql/data/18
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 3s
@@ -58,7 +66,7 @@ services:
       - deploy
       - infra
 
-  wtm-pgadmin:
+  pgadmin:
     image: "dpage/pgadmin4:9.12"
     deploy:
       resources:
@@ -68,17 +76,17 @@ services:
     ports:
       - 5440:80
     volumes:
-      - wtm-pgadmin-data:/var/lib/pgadmin
+      - pgadmin-data:/var/lib/pgadmin
     environment:
       PGADMIN_DEFAULT_PASSWORD: Q1234567890y
       PGADMIN_DEFAULT_EMAIL: a@a.com
     depends_on:
-      wtm-db:
+      db:
         condition: service_healthy
     profiles:
       - deploy
       - infra
 
 volumes:
-  wtm-db-data:
-  wtm-pgadmin-data:
+  db-data:
+  pgadmin-data:
