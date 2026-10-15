@@ -1,29 +1,70 @@
 name: what-the-messenger
 
+x-connection-string: &db-conn "Host=wtm-db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+x-dotnet-env: &dotnet-env
+  ConnectionStrings__PostgresConnection: *db-conn
+
 services:
+  wtm-client:
+    build: ./client
+    ports:
+      - ${CLIENT_PORT}:80
+    depends_on:
+      - wtm-api
+    profiles:
+      - deploy
+
+  wtm-api:
+    build: ./server
+    environment:
+      <<: *dotnet-env
+    ports:
+      - ${API_PORT}:8080
+    depends_on:
+      wtm-migration:
+        condition: service_completed_successfully
+      wtm-db:
+        condition: service_healthy
+    profiles:
+      - deploy
+
+  wtm-migration:
+    build: ./server
+    entrypoint: ["/app/efbundle", "--connection", *db-conn]
+    environment:
+      <<: *dotnet-env
+    depends_on:
+      wtm-db:
+        condition: service_healthy
+    profiles:
+      - deploy
+
   wtm-db:
     image: postgres:18
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: Q1234567890y
-      POSTGRES_DB: whatthemessenger
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - wtm-db-data:/var/lib/postgresql/data/18
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
     profiles:
       - deploy
       - infra
 
   wtm-pgadmin:
-    restart: unless-stopped
     image: "dpage/pgadmin4:9.12"
     deploy:
-       resources:
-         limits:
-           cpus: "0.5"
-           memory: "512M"
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
     ports:
       - 5440:80
     volumes:
@@ -32,7 +73,8 @@ services:
       PGADMIN_DEFAULT_PASSWORD: Q1234567890y
       PGADMIN_DEFAULT_EMAIL: a@a.com
     depends_on:
-      - wtm-db
+      wtm-db:
+        condition: service_healthy
     profiles:
       - deploy
       - infra
@@ -40,19 +82,3 @@ services:
 volumes:
   wtm-db-data:
   wtm-pgadmin-data:
-
-  # lm-api:
-  #   container_name: lm-api
-  #   env_file: .env
-  #   depends_on:
-  #     - lm-pg
-  #   volumes:
-  #     - ./src:/law-monitor
-  #   build: .
-  #   ports:
-  #     - 4002:8000
-  #   networks:
-  #     - lm-net
-  #   command: uvicorn main:api --host 0.0.0.0 --port 8000
-  #   profiles:
-  #     - deploy
