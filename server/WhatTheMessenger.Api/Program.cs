@@ -5,10 +5,14 @@ using WhatTheMessenger.Api.Features.Users;
 using WhatTheMessenger.Api.Features.RPC;
 using WhatTheMessenger.Api.Features.Chats;
 using WhatTheMessenger.Api.Features.Messages;
+using Microsoft.AspNetCore.DataProtection;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSignalR();
+var redisConnection = builder.Configuration.GetConnectionString("RedisConnection");
+ArgumentException.ThrowIfNullOrWhiteSpace(redisConnection);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("DevCors", policy =>
@@ -34,6 +38,19 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.ConfigureDataAccess();
 builder.ConfigureCookieIdentityAuth();
 builder.Services.AddAntiforgery();
+
+var redisLazy = new Lazy<IConnectionMultiplexer>(() => ConnectionMultiplexer.Connect(redisConnection));
+builder.Services.AddSignalR()
+    .AddStackExchangeRedis(options =>
+    {
+        options.ConnectionFactory = async _ => redisLazy.Value;
+        options.Configuration.ChannelPrefix = RedisChannel.Literal("wtm-realtime");
+    });
+
+builder.Services.AddDataProtection()
+    .SetApplicationName("WhatTheMessenger")
+    .PersistKeysToStackExchangeRedis(redisLazy.Value);
+
 
 builder.Services.AddTransient<IChatNotificationService, SignalRChatNotificationService>();
 

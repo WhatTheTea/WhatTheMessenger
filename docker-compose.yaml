@@ -3,6 +3,7 @@ name: what-the-messenger
 x-connection-string: &db-conn "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
 x-dotnet-env: &dotnet-env
   ConnectionStrings__PostgresConnection: *db-conn
+  ConnectionStrings__RedisConnection: 'redis'
 
 services:
   gateway:
@@ -34,8 +35,19 @@ services:
         condition: service_completed_successfully
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     profiles:
       - deploy
+
+  redis:
+    image: redis:alpine
+    ports: 
+      - 4006:6379
+    profiles:
+      - deploy
+      - infra
+
 
   # Short lived migration container to create the database and run migrations
   migration:
@@ -48,6 +60,7 @@ services:
         condition: service_healthy
     profiles:
       - deploy
+      - infra
 
   db:
     image: postgres:18
@@ -55,6 +68,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - 4005:5432
     volumes:
       - db-data:/var/lib/postgresql/data/18
     healthcheck:
@@ -66,26 +81,26 @@ services:
       - deploy
       - infra
 
-  pgadmin:
-    image: "dpage/pgadmin4:9.12"
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: "512M"
-    ports:
-      - 5440:80
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    environment:
-      PGADMIN_DEFAULT_PASSWORD: Q1234567890y
-      PGADMIN_DEFAULT_EMAIL: a@a.com
-    depends_on:
-      db:
-        condition: service_healthy
-    profiles:
-      - deploy
-      - infra
+  # pgadmin:
+  #   image: "dpage/pgadmin4:9.12"
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: "0.5"
+  #         memory: "512M"
+  #   ports:
+  #     - 4055:80
+  #   volumes:
+  #     - pgadmin-data:/var/lib/pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   profiles:
+  #     - deploy
+  #     - infra
 
 volumes:
   db-data:

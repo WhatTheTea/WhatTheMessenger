@@ -5,7 +5,6 @@ using WhatTheMessenger.Core;
 
 namespace WhatTheMessenger.Api.Features.RPC;
 
-// TODO: Wire it up and add Redis pub-sub
 public class SignalRChatNotificationService(IHubContext<ChatHub, IChatHub> hub) : IChatNotificationService
 {
     public Task NotifyChatCreated(Chat chat)
