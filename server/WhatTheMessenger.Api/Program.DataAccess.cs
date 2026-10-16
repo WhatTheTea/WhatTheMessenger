@@ -7,22 +7,8 @@ public static partial class Configuration
 {
     public static WebApplicationBuilder ConfigureDataAccess(this WebApplicationBuilder builder)
     {
-        var connectionString = builder.Configuration.GetConnectionString("PostgresConnection") 
-            ?? throw new InvalidOperationException("Connection string not found.");
         builder.Services.AddDbContext<IAppDbContext, ApplicationDbContext>(options =>
-        {
-            if (builder.Configuration.GetValue<bool>("single-process"))
-            {
-                options.UseSqlite("Filename=dev.db");
-            }
-            else
-            {
-                options.UseNpgsql(connectionString, builder =>
-                {
-                    builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
-                });
-            }
-        });
+            options.ConfigureAppDbContext(builder.Configuration));
 
         if (builder.Environment.IsDevelopment())
         {
