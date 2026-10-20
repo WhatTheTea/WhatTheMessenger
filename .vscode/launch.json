@@ -31,7 +31,7 @@
       "type": "dotnet",
       "request": "launch",
       "projectPath": "${workspaceFolder}/server/WhatTheMessenger.Api/WhatTheMessenger.Api.csproj",
-      "launchSettingsProfile": "dev (single-process)"
+      // "launchSettingsProfile": "dev (single-process)" there's no such option sadly, so let this to be a reminder
     }
   ],
   "compounds": [

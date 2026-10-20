@@ -8,9 +8,68 @@ It is written in .NET and Angular and will be used as playground both for fronte
 
 ## Development
 
-> ⚠️ When building from VS Code with C# Dev Kit, select .NET launch configuration as "dev (single-process)" before launching
-using "full-stack (local)" configurations
+### Prerequisites
 
-## Build
+- .NET SDK for API
+- Node.js for client
+- Bun for client
+- `bun install` to restore frontend dependencies
 
-TBD
+### Full docker deployment
+
+```sh
+docker compose --profile deploy --env-file dev.env up
+```
+
+Backend is scalable here, so you could scale the `api` container:
+```sh
+docker compose --profile deploy --env-file dev.env up --scale api=2
+```
+
+### Hybrid docker deployment
+
+If you wish to run the app locally with actual infrastructure, you can use the following commands:
+
+1. Start the infrastructure
+```sh
+docker compose --profile infra --env-file dev.env up
+```
+
+2. Then start the backend (server) either via `full-stack (local)` configuration in VS Code or the following command:
+```sh
+cd server # ensure you are in the server folder
+dotnet watch --project WhatTheMessenger.Api -lp "dev"
+```
+
+3. Client uses `bun` package manager, so you could run it via `bun run` command in terminal:
+```sh
+cd client # ensure you are in the client folder
+bun run start
+``` 
+
+### Fullstack local deployment
+
+This is default development profile for me, it is the same as `full-stack (local)` in VS Code, but you need to 
+configure the launch profile in VS Code to use it: `> .NET: Select Launch Configuration -> dev (single-process)`
+
+Or use the following commands:
+
+```sh
+cd server # ensure you are in the server folder
+dotnet watch --project WhatTheMessenger.Api -lp "dev (single-process)"
+```
+
+And it is the same as in hybrid deployment for client:
+```sh
+cd client # ensure you are in the client folder
+bun run start
+``` 
+
+#### Mock frontend UI
+
+There's option to run UI without backend with `development` profile: 
+```sh
+cd client # ensure you are in the client folder
+
+bun run ng serve --watch --configuration development
+```
