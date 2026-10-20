@@ -3,7 +3,7 @@ name: what-the-messenger
 x-connection-string: &db-conn "Host=db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
 x-dotnet-env: &dotnet-env
   ConnectionStrings__PostgresConnection: *db-conn
-  ConnectionStrings__RedisConnection: 'redis'
+  ConnectionStrings__RedisConnection: 'redis:${REDIS_PASSWORD}'
 
 services:
   gateway:
