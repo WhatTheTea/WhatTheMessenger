@@ -12,8 +12,8 @@ using WhatTheMessenger.Infrastructure.DataAccess;
 namespace WhatTheMessenger.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261020183733_Sync")]
-    partial class Sync
+    [Migration("20261020183733_UpdateDotNet")]
+    partial class UpdateDotNet
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

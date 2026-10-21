@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WhatTheMessenger.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Sync : Migration
+    public partial class UpdateDotNet : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
