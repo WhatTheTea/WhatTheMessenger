@@ -6,6 +6,16 @@ x-dotnet-env: &dotnet-env
   ConnectionStrings__RedisConnection: 'redis,password=${REDIS_PASSWORD}'
 
 services:
+  k6:
+    image: grafana/k6:latest
+    command: run /scripts/main.js
+    environment:
+      TARGET_URL: http://gateway
+    volumes: 
+      - ./server/k6:/scripts
+    profiles:
+      - k6
+
   gateway:
     image: nginx:alpine
     ports:

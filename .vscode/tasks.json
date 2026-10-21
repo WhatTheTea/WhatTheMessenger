@@ -3,12 +3,23 @@
   "tasks": [
     {
       "type": "shell",
-      "command": "docker-compose --profile infra --file ${workspaceFolder}/WhatTheMessenger.Server/Properties/docker-compose.yaml up",
-      "label": "docker: infra"
+      "command": "docker-compose --profile deploy --env-file dev.env up",
+      "label": "docker: deploy",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
     },
     {
-      // "type": "shell",
-      // "command": "cd server && dotnet watch --project WhatTheMessenger.Api -lp 'dev (single-process)'",
+      "type": "shell",
+      "command": "docker-compose --profile infra --env-file dev.env up",
+      "label": "docker: infra",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    },
+    {
       "command": "dotnet",
       "args": [
         "watch",
