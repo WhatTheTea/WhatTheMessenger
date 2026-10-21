@@ -6,6 +6,12 @@ It is written in .NET and Angular and will be used as playground both for fronte
 
 ![Demo](docs/resources/angular-demo.png)
 
+## Experiments
+
+> 💡 Collection of insights from my experiments with this project
+
+- [Spike of login requests](docs/experiments/login-spike.md)
+
 ## Development
 
 ### Prerequisites

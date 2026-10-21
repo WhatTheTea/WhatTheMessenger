@@ -35,7 +35,6 @@ export function seedTestUsers(baseUrl, totalUsers = 1000) {
   }
 }
 
-// 2. VU SCENARIO: Executed by each Virtual User thread during the test run[cite: 1]
 export function simulateChatUser(baseUrl) {
   const headers = { "Content-Type": "application/json" };
   const user = login(__VU);
@@ -54,7 +53,6 @@ export function simulateChatUser(baseUrl) {
     return;
   }
 
-  // B. Establish SignalR WebSocket connection using the authenticated cookie
   const wsUrl = baseUrl.replace("http", "ws") + "/hubs/v1/chat";
 
   const res = ws.connect(wsUrl, {}, function (socket) {
@@ -69,7 +67,6 @@ export function simulateChatUser(baseUrl) {
       });
     });
 
-    // C. Perform REST requests while keeping the WebSocket connection active
     const httpRes = http.get(`${baseUrl}/api/v1/chats`);
     check(httpRes, {
       "GET /chats status is 200": (r) => r.status === 200,
